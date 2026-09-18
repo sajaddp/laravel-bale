@@ -16,7 +16,7 @@
 Python فقط برای ساخت یا ویرایش سایت مستندات لازم است، نه برای مصرف پکیج. در یک محیط مجازی جداگانه dependencyهای مستندات را نصب کنید و پیش از PR build strict را اجرا کنید:
 
 ~~~shell
-python -m venv .venv-docs
+python3 -m venv .venv-docs
 source .venv-docs/bin/activate
 pip install -r requirements-docs.txt
 mkdocs serve

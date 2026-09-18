@@ -45,7 +45,7 @@ markdown_extensions:
 extra_css:
   - stylesheets/extra.css
 
-copyright: "Laravel Bale · <a href=\"https://github.com/sajaddp/laravel-bale\">GitHub</a> · <a href=\"https://github.com/sajaddp/laravel-bale/blob/main/LICENSE.md\">MIT License</a>"
+copyright: "Laravel Bale · <a href=\"https://github.com/sajaddp/laravel-bale\">GitHub</a> · <a href=\"https://github.com/sajaddp/laravel-bale/blob/main/LICENSE\">MIT License</a>"
 
 nav:
   - خانه: index.md
