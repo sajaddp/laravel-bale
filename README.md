@@ -74,7 +74,13 @@ try {
 
 ## Laravel Boost
 
-The package ships a concise Boost guideline and a `bale-development` skill. Laravel Boost discovers them when it is installed in a consuming application.
+The package ships a concise Boost guideline and a `bale-development` skill. After installing Laravel Boost in a consuming application, run:
+
+```bash
+php artisan boost:install
+```
+
+Boost will include this package's guideline and, when skills are selected, install the bundled `bale-development` skill.
 
 ## Development
 
