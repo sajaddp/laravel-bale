@@ -23,6 +23,66 @@ $message = Bale::sendMessage(
 
 Required arguments always win over conflicting option keys. Pass only Bale-documented optional values through options.
 
+## Updates
+
+~~~php
+$updates = Bale::getUpdates([
+    'offset' => $nextOffset,
+    'limit' => 100,
+    'timeout' => 30,
+]);
+~~~
+
+getUpdates makes one request only. This package does not supply polling, offset persistence, queues, handlers, or an incoming webhook route; those remain application responsibilities.
+
+## Media and local uploads
+
+For `sendPhoto`, `sendAudio`, `sendDocument`, `sendVideo`, `sendAnimation`, and `sendVoice`, a `string` means a Bale file ID or an HTTP URL and is sent as JSON. Do not pass a local path string expecting an upload. Use `SplFileInfo` for an explicit local multipart upload.
+
+~~~php
+use SplFileInfo;
+
+Bale::sendDocument(
+    chatId: 123456789,
+    document: 'bale-file-id',
+    options: ['caption' => 'فایل قبلی'],
+);
+
+Bale::sendDocument(
+    chatId: 123456789,
+    document: new SplFileInfo(storage_path('app/example.pdf')),
+    options: ['caption' => 'فایل جدید'],
+);
+~~~
+
+Bale documentation currently requires `from_chat_id` for `sendPhoto`:
+
+~~~php
+Bale::sendPhoto(
+    chatId: '@target',
+    fromChatId: '@source',
+    photo: new SplFileInfo(storage_path('app/example.jpg')),
+);
+~~~
+
+Use Bale's media-array shape directly for albums. Local media-group attachments have explicit names and matching `attach://name` references; `media` is JSON-serialized for multipart transport.
+
+~~~php
+Bale::sendMediaGroup(
+    chatId: 123456789,
+    media: [
+        ['type' => 'photo', 'media' => 'attach://first'],
+        ['type' => 'photo', 'media' => 'attach://second'],
+    ],
+    attachments: [
+        'first' => new SplFileInfo(storage_path('app/first.jpg')),
+        'second' => new SplFileInfo(storage_path('app/second.jpg')),
+    ],
+);
+~~~
+
+`sendLocation`, `sendContact`, and `getFile` return Bale result arrays. getFile retrieves metadata only; there is no download or Storage helper.
+
 ## Webhook configuration
 
 Configure outgoing delivery with Bale::setWebhook('https://example.com/bale/updates'), inspect it with Bale::getWebhookInfo(), and remove it with Bale::deleteWebhook().

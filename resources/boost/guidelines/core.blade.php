@@ -3,4 +3,5 @@
 - Configure the bot token through `BALE_BOT_TOKEN`.
 - Do not assume Telegram Bot API features are available in Bale.
 - Use only documented package functionality.
+- For Bale media inputs, use strings only for Bale file IDs or HTTP URLs; use explicit local file objects for uploads.
 - This package is an outgoing Bale API client; define incoming webhook routes in the consuming Laravel application.

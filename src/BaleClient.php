@@ -6,9 +6,12 @@ namespace Sajaddp\Bale;
 
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use InvalidArgumentException;
 use LogicException;
 use Sajaddp\Bale\Exceptions\BaleRequestException;
+use SplFileInfo;
 use stdClass;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use UnexpectedValueException;
 
 class BaleClient
@@ -126,6 +129,125 @@ class BaleClient
     }
 
     /**
+     * Make one getUpdates request. Applications are responsible for advancing offsets.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<mixed>
+     */
+    public function getUpdates(array $options = []): array
+    {
+        return $this->requestArray('getUpdates', $options);
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<mixed>
+     */
+    public function sendPhoto(int|string $chatId, int|string $fromChatId, string|SplFileInfo $photo, array $options = []): array
+    {
+        return $this->sendMedia('sendPhoto', $chatId, 'photo', $photo, $options, [
+            'from_chat_id' => $fromChatId,
+        ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<mixed>
+     */
+    public function sendAudio(int|string $chatId, string|SplFileInfo $audio, array $options = []): array
+    {
+        return $this->sendMedia('sendAudio', $chatId, 'audio', $audio, $options);
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<mixed>
+     */
+    public function sendDocument(int|string $chatId, string|SplFileInfo $document, array $options = []): array
+    {
+        return $this->sendMedia('sendDocument', $chatId, 'document', $document, $options);
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<mixed>
+     */
+    public function sendVideo(int|string $chatId, string|SplFileInfo $video, array $options = []): array
+    {
+        return $this->sendMedia('sendVideo', $chatId, 'video', $video, $options);
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<mixed>
+     */
+    public function sendAnimation(int|string $chatId, string|SplFileInfo $animation, array $options = []): array
+    {
+        return $this->sendMedia('sendAnimation', $chatId, 'animation', $animation, $options);
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<mixed>
+     */
+    public function sendVoice(int|string $chatId, string|SplFileInfo $voice, array $options = []): array
+    {
+        return $this->sendMedia('sendVoice', $chatId, 'voice', $voice, $options);
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $media
+     * @param  array<string, mixed>  $options
+     * @param  array<string, SplFileInfo>  $attachments
+     * @return array<mixed>
+     */
+    public function sendMediaGroup(int|string $chatId, array $media, array $options = [], array $attachments = []): array
+    {
+        $data = array_merge($options, [
+            'chat_id' => $chatId,
+            'media' => $media,
+        ]);
+
+        if ($attachments === []) {
+            return $this->requestArray('sendMediaGroup', $data);
+        }
+
+        return $this->requestMultipartArray('sendMediaGroup', $data, $attachments, ['media']);
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<mixed>
+     */
+    public function sendLocation(int|string $chatId, float $latitude, float $longitude, array $options = []): array
+    {
+        return $this->requestArray('sendLocation', array_merge($options, [
+            'chat_id' => $chatId,
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+        ]));
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @return array<mixed>
+     */
+    public function sendContact(int|string $chatId, int|string $phoneNumber, string $firstName, array $options = []): array
+    {
+        return $this->requestArray('sendContact', array_merge($options, [
+            'chat_id' => $chatId,
+            'phone_number' => $phoneNumber,
+            'first_name' => $firstName,
+        ]));
+    }
+
+    /** @return array<mixed> */
+    public function getFile(string $fileId): array
+    {
+        return $this->requestArray('getFile', ['file_id' => $fileId]);
+    }
+
+    /**
      * @param  array<string, mixed>  $data
      */
     private function request(string $method, array $data = []): mixed
@@ -134,6 +256,43 @@ class BaleClient
             ->asJson()
             ->post($this->urlFor($method), $data);
 
+        return $this->parseResponse($response);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @param  array<string, SplFileInfo>  $files
+     * @param  array<int, string>  $jsonFields
+     */
+    private function requestMultipart(string $method, array $data, array $files, array $jsonFields = []): mixed
+    {
+        /** @var array<string, string> $paths */
+        $paths = [];
+
+        foreach ($files as $name => $file) {
+            $this->assertAttachmentName($name);
+            $paths[$name] = $this->readablePath($file);
+        }
+
+        $request = Http::acceptJson();
+
+        foreach ($files as $name => $file) {
+            $handle = fopen($paths[$name], 'rb');
+
+            if ($handle === false) {
+                throw new InvalidArgumentException(sprintf('Bale upload file "%s" cannot be opened for reading.', $paths[$name]));
+            }
+
+            $request = $request->attach($name, $handle, $this->filenameFor($file));
+        }
+
+        $response = $request->post($this->urlFor($method), $this->multipartData($data, $jsonFields));
+
+        return $this->parseResponse($response);
+    }
+
+    private function parseResponse(Response $response): mixed
+    {
         $payload = $response->json();
 
         if (! is_array($payload) || ! array_key_exists('ok', $payload) || ! is_bool($payload['ok'])) {
@@ -186,6 +345,87 @@ class BaleClient
         }
 
         return $result;
+    }
+
+    /**
+     * @param  array<string, mixed>  $options
+     * @param  array<string, int|string>  $required
+     * @return array<mixed>
+     */
+    private function sendMedia(string $method, int|string $chatId, string $field, string|SplFileInfo $file, array $options, array $required = []): array
+    {
+        $data = array_merge($options, $required, [
+            'chat_id' => $chatId,
+            $field => $file,
+        ]);
+
+        if (is_string($file)) {
+            return $this->requestArray($method, $data);
+        }
+
+        unset($data[$field]);
+
+        return $this->requestMultipartArray($method, $data, [$field => $file], ['reply_markup']);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @param  array<string, SplFileInfo>  $files
+     * @param  array<int, string>  $jsonFields
+     * @return array<mixed>
+     */
+    private function requestMultipartArray(string $method, array $data, array $files, array $jsonFields = []): array
+    {
+        $result = $this->requestMultipart($method, $data, $files, $jsonFields);
+
+        if (! is_array($result)) {
+            throw new UnexpectedValueException('Bale returned a successful response without an array result.');
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @param  array<int, string>  $jsonFields
+     * @return array<string, mixed>
+     */
+    private function multipartData(array $data, array $jsonFields): array
+    {
+        foreach ($jsonFields as $field) {
+            if (array_key_exists($field, $data) && ! is_string($data[$field])) {
+                $data[$field] = json_encode($data[$field], JSON_THROW_ON_ERROR);
+            }
+        }
+
+        return $data;
+    }
+
+    private function assertAttachmentName(string $name): void
+    {
+        if (preg_match('/^[A-Za-z0-9_-]+$/', $name) !== 1) {
+            throw new InvalidArgumentException('Bale attachment names may contain only letters, numbers, underscores, and hyphens.');
+        }
+    }
+
+    private function readablePath(SplFileInfo $file): string
+    {
+        $path = $file->getPathname();
+
+        if (! $file->isFile() || ! $file->isReadable()) {
+            throw new InvalidArgumentException(sprintf('Bale upload file "%s" does not exist or is not readable.', $path));
+        }
+
+        return $path;
+    }
+
+    private function filenameFor(SplFileInfo $file): string
+    {
+        if ($file instanceof UploadedFile && $file->getClientOriginalName() !== '') {
+            return $file->getClientOriginalName();
+        }
+
+        return $file->getFilename();
     }
 
     /** @param array<mixed> $payload */

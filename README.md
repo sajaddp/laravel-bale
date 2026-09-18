@@ -13,6 +13,8 @@ A minimal Laravel 13 package for calling the Bale Bot API.
 - Webhook configuration and status
 - Message forwarding, copying, editing, and deletion
 - Chat actions and callback-query responses
+- One-request long-polling updates
+- Media, location, contact, and file-metadata APIs
 
 ## Configuration
 
@@ -49,6 +51,93 @@ $message = Bale::sendMessage(
 ~~~
 
 Required arguments always take precedence over conflicting keys in options.
+
+## Updates
+
+~~~php
+$updates = Bale::getUpdates([
+    'offset' => $nextOffset,
+    'limit' => 100,
+    'timeout' => 30,
+]);
+~~~
+
+`getUpdates` makes exactly one Bale request. Applications using long polling are responsible for advancing and persisting their own offset.
+
+## Media and files
+
+For media inputs, a string is passed to Bale unchanged and represents a Bale `file_id` or an HTTP URL. A `SplFileInfo` is an explicit local-file upload; strings are never inspected as local paths.
+
+~~~php
+use SplFileInfo;
+
+$fromBale = Bale::sendDocument(
+    chatId: 123456789,
+    document: 'bale-file-id',
+    options: ['caption' => 'فایل قبلی'],
+);
+
+$fromUrl = Bale::sendVideo(
+    chatId: 123456789,
+    video: 'https://example.test/video.mp4',
+);
+
+$uploaded = Bale::sendDocument(
+    chatId: 123456789,
+    document: new SplFileInfo(storage_path('app/example.pdf')),
+    options: ['caption' => 'فایل جدید'],
+);
+~~~
+
+The supported single-media methods are `sendPhoto`, `sendAudio`, `sendDocument`, `sendVideo`, `sendAnimation`, and `sendVoice`. Bale's current `sendPhoto` documentation also requires `from_chat_id`:
+
+~~~php
+$photo = Bale::sendPhoto(
+    chatId: '@target_channel',
+    fromChatId: '@source_channel',
+    photo: new SplFileInfo(storage_path('app/example.jpg')),
+);
+~~~
+
+For media groups, use Bale's documented media array directly. When local files are needed, explicitly reference multipart fields with `attach://` and provide matching `SplFileInfo` attachments:
+
+~~~php
+$messages = Bale::sendMediaGroup(
+    chatId: 123456789,
+    media: [
+        ['type' => 'photo', 'media' => 'attach://first'],
+        ['type' => 'photo', 'media' => 'attach://second'],
+    ],
+    attachments: [
+        'first' => new SplFileInfo(storage_path('app/first.jpg')),
+        'second' => new SplFileInfo(storage_path('app/second.jpg')),
+    ],
+);
+~~~
+
+String media sources and media groups without local attachments use JSON requests. Local `SplFileInfo` uploads and explicit media-group attachments use multipart/form-data. The package JSON-serializes Bale's structured multipart fields such as `reply_markup` and `media`.
+
+## Location, contacts, and file metadata
+
+~~~php
+$location = Bale::sendLocation(
+    chatId: 123456789,
+    latitude: 35.6892,
+    longitude: 51.3890,
+    options: ['horizontal_accuracy' => 12.5],
+);
+
+$contact = Bale::sendContact(
+    chatId: 123456789,
+    phoneNumber: '+989120000000',
+    firstName: 'سجاد',
+    options: ['last_name' => 'دهشیری'],
+);
+
+$file = Bale::getFile('bale-file-id');
+~~~
+
+These methods return Bale result objects as arrays. `getFile` returns metadata only; this package does not provide a file-download helper.
 
 ## Webhooks
 
