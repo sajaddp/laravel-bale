@@ -45,7 +45,7 @@ use Sajaddp\Bale\Facades\Bale;
 
 README برای شروع سریع است. مستندات ساخت‌یافتهٔ مخزن جزئیات و مرجع کامل را نگه می‌دارند:
 
-- [مستندات آنلاین (پس از فعال‌شدن GitHub Pages)](https://sajaddp.github.io/laravel-bale/)
+- [مستندات آنلاین](https://sajaddehshiri.ir/laravel-bale/)
 - [شروع کار](docs/getting-started.md)
 - [پیام‌ها](docs/messages.md)
 - [Webhook](docs/webhooks.md)
