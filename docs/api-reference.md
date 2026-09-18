@@ -1,3 +1,8 @@
+---
+title: مرجع API عمومی Laravel Bale
+description: امضا، خروجی و مرز wrapperهای رسمی، convenienceها و API تست Laravel Bale.
+---
+
 # مرجع API
 
 این فهرست از public methodهای فعلی `BaleClient` ساخته شده است. wrapperهای رسمی مستقیماً یک method مستند Bale Bot API را فراخوانی می‌کنند؛ convenienceها workflowهای واقعی را compose می‌کنند و testing APIها endpoint نیستند.

@@ -1,4 +1,9 @@
-# شروع کار
+---
+title: شروع Laravel Bale در Laravel 13
+description: راهنمای نصب آینده، تنظیم BALE_BOT_TOKEN و ارسال نخستین پیام بله با Laravel Bale.
+---
+
+# شروع کار با Laravel Bale
 
 ## نیازمندی‌ها
 

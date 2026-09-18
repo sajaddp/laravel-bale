@@ -45,12 +45,19 @@ use Sajaddp\Bale\Facades\Bale;
 
 README برای شروع سریع است. مستندات ساخت‌یافتهٔ مخزن جزئیات و مرجع کامل را نگه می‌دارند:
 
+- [مستندات آنلاین (پس از فعال‌شدن GitHub Pages)](https://sajaddp.github.io/laravel-bale/)
 - [شروع کار](docs/getting-started.md)
+- [پیام‌ها](docs/messages.md)
+- [Webhook](docs/webhooks.md)
+- [Polling](docs/polling.md)
+- [فایل و رسانه](docs/files-media.md)
+- [Callback و Keyboard](docs/callbacks-keyboards.md)
 - [مرجع API](docs/api-reference.md)
 - [پوشش Bale Bot API](docs/api-coverage.md)
 - [تست](docs/testing.md)
 - [دستورپخت‌ها](docs/recipes.md)
 - [رفع اشکال](docs/troubleshooting.md)
+- [AI Coding](docs/ai-coding.md)
 
 ## شروع سریع: چطور با Laravel به بله پیام بفرستیم؟
 

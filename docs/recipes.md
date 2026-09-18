@@ -1,3 +1,8 @@
+---
+title: دستورپخت‌های Laravel Bale
+description: نمونه‌های کوتاه و واقعی Laravel Bale برای پیام، رسانه، callback، polling، webhook و تست.
+---
+
 # دستورپخت‌ها
 
 همهٔ مثال‌ها از API واقعی پکیج استفاده می‌کنند. برای امضاها به [مرجع API](api-reference.md) مراجعه کنید.

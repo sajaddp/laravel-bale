@@ -1,3 +1,8 @@
+---
+title: پوشش Bale Bot API در Laravel Bale
+description: فهرست authoritative متدهای رسمی Bale Bot API که Laravel Bale پشتیبانی می‌کند یا نمی‌کند.
+---
+
 # پوشش Bale Bot API
 
 این inventory تمام methodهای Bot API حاضر در HTML رسمی Bale است؛ typeها، MiniApp و JavaScript APIها در این جدول نیستند. «Supported» یعنی wrapper مستقیم public در Laravel Bale وجود دارد. تاریخ roadmap یا سازگاری استنباطی وجود ندارد.

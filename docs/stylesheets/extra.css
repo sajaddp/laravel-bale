@@ -1,0 +1,21 @@
+:root {
+  --md-text-font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, Arial, sans-serif;
+  --md-code-font: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+.md-typeset :is(code, kbd, pre),
+.md-search__input,
+.md-header__topic,
+.md-typeset a[href^="http"],
+.md-typeset a[href^="/"] {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.md-typeset pre {
+  text-align: left;
+}
+
+.md-typeset table:not([class]) {
+  display: table;
+}

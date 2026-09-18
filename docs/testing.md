@@ -1,3 +1,8 @@
+---
+title: تست Laravel Bale با Bale fake
+description: راهنمای تست integration بله با Bale::fake و assertionهای Laravel-native بدون درخواست واقعی.
+---
+
 # تست Bale integration
 
 `Bale::fake()` مسیر واقعی `BaleClient` را حفظ می‌کند: public methodها payload می‌سازند، HTTP Client Laravel درخواست را record می‌کند و parser پکیج envelope Bale را پردازش می‌کند. فقط درخواست‌های Bot API و دانلود فایل همین پکیج fake می‌شوند؛ HTTP نامرتبط برنامه نه fake است و نه در Bale assertionها شمرده می‌شود.

@@ -1,3 +1,8 @@
+---
+title: رفع اشکال Laravel Bale
+description: خطاهای پرتکرار Laravel Bale برای توکن، Webhook، فایل، polling و مرز Bale با Telegram.
+---
+
 # رفع اشکال
 
 ## `BALE_BOT_TOKEN` تنظیم نشده است
