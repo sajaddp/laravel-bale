@@ -174,7 +174,7 @@ class BaleClient
      * Make one getUpdates request. Applications are responsible for advancing offsets.
      *
      * @param  array<string, mixed>  $options
-     * @return array<int, array<string, mixed>>
+     * @return list<array<string, mixed>>
      */
     public function getUpdates(array $options = []): array
     {
@@ -245,7 +245,7 @@ class BaleClient
      * @param  list<array<string, mixed>>  $media
      * @param  array<string, mixed>  $options
      * @param  array<array-key, SplFileInfo>  $attachments
-     * @return array<int, array<string, mixed>>
+     * @return list<array<string, mixed>>
      */
     public function sendMediaGroup(int|string $chatId, array $media, array $options = [], array $attachments = []): array
     {
@@ -559,7 +559,7 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $data
-     * @return array<mixed>
+     * @return ($method is 'getUpdates'|'sendMediaGroup' ? list<array<string, mixed>> : array<mixed>)
      */
     private function requestArray(string $method, array $data = [], int|float|null $transportTimeout = null): array
     {
@@ -609,7 +609,7 @@ class BaleClient
      * @param  array<string, mixed>  $data
      * @param  array<array-key, SplFileInfo>  $files
      * @param  array<int, string>  $jsonFields
-     * @return array<mixed>
+     * @return ($method is 'getUpdates'|'sendMediaGroup' ? list<array<string, mixed>> : array<mixed>)
      */
     private function requestMultipartArray(string $method, array $data, array $files, array $jsonFields = []): array
     {
