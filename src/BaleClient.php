@@ -16,6 +16,10 @@ use UnexpectedValueException;
 
 class BaleClient
 {
+    private const LONG_POLL_HEADROOM_SECONDS = 5;
+
+    private const GUZZLE_MILLISECONDS_PER_SECOND = 1000;
+
     /** @return array<mixed> */
     public function getMe(): array
     {
@@ -137,7 +141,7 @@ class BaleClient
     public function getUpdates(array $options = []): array
     {
         $transportTimeout = is_int($options['timeout'] ?? null)
-            ? max(30, $options['timeout'] + 5)
+            ? $this->transportTimeoutForLongPoll($options['timeout'])
             : null;
 
         return $this->requestArray('getUpdates', $options, $transportTimeout);
@@ -409,6 +413,20 @@ class BaleClient
         }
 
         return $data;
+    }
+
+    private function transportTimeoutForLongPoll(int $baleTimeout): int
+    {
+        // Guzzle converts the seconds value to float before multiplying by 1000.
+        // One second below the integer division boundary remains representable.
+        $largestSafeGuzzleTimeout = intdiv(PHP_INT_MAX, self::GUZZLE_MILLISECONDS_PER_SECOND) - 1;
+        $largestBaleTimeoutWithHeadroom = $largestSafeGuzzleTimeout - self::LONG_POLL_HEADROOM_SECONDS;
+
+        if ($baleTimeout > $largestBaleTimeoutWithHeadroom) {
+            return 0;
+        }
+
+        return max(30, $baleTimeout + self::LONG_POLL_HEADROOM_SECONDS);
     }
 
     /**

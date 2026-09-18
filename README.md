@@ -62,7 +62,7 @@ $updates = Bale::getUpdates([
 ]);
 ~~~
 
-`getUpdates` makes exactly one Bale request. When its Bale `timeout` option is an integer, the HTTP transport timeout has five seconds of headroom (and is never below 30 seconds). Applications using long polling are responsible for advancing and persisting their own offset.
+`getUpdates` makes exactly one Bale request. Ordinary integer Bale `timeout` values receive five seconds of HTTP transport headroom (never below 30 seconds); when a value cannot be safely represented by the HTTP timeout, the total transport timeout is disabled instead. Applications using long polling are responsible for advancing and persisting their own offset.
 
 ## Media and files
 
