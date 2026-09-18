@@ -47,6 +47,12 @@ class BaleClient
             throw new UnexpectedValueException('Bale returned an invalid API response.');
         }
 
+        if ($payload['ok'] === false) {
+            throw BaleRequestException::fromResponse($payload);
+        }
+
+        $response->throw();
+
         if ($payload['ok'] !== true) {
             throw BaleRequestException::fromResponse($payload);
         }

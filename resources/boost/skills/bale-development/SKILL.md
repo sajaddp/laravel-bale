@@ -24,7 +24,6 @@ $message = Bale::sendMessage(
     chatId: 123456789,
     text: 'سلام',
     options: [
-        'parse_mode' => 'MarkdownV2',
         'reply_to_message_id' => 123,
     ],
 );

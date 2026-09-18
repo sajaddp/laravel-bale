@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Http\Client\Request;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Sajaddp\Bale\BaleClient;
 use Sajaddp\Bale\BaleServiceProvider;
@@ -59,7 +60,6 @@ it('sends required sendMessage values and Bale-supported options', function (): 
         chatId: 123456789,
         text: 'سلام',
         options: [
-            'parse_mode' => 'MarkdownV2',
             'reply_to_message_id' => 12,
         ],
     ))->toBe(['message_id' => 99]);
@@ -68,7 +68,6 @@ it('sends required sendMessage values and Bale-supported options', function (): 
         return $request->url() === 'https://tapi.bale.ai/bottest-token/sendMessage'
             && $request->method() === 'POST'
             && $request->data() === [
-                'parse_mode' => 'MarkdownV2',
                 'reply_to_message_id' => 12,
                 'chat_id' => 123456789,
                 'text' => 'سلام',
@@ -96,6 +95,18 @@ it('does not allow options to override required sendMessage values', function ()
             'text' => 'سلام',
         ];
     });
+});
+
+it('does not return a successful Bale result from an unsuccessful HTTP response', function (): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getMe' => Http::response([
+            'ok' => true,
+            'result' => ['id' => 42],
+        ], 500),
+    ]);
+
+    expect(fn (): array => Bale::getMe())
+        ->toThrow(RequestException::class);
 });
 
 it('throws an inspectable exception for Bale API failures', function (): void {
