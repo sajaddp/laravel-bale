@@ -34,16 +34,7 @@
 | نام پکیج | `sajaddp/laravel-bale` |
 | مجوز | [ام‌آی‌تی](LICENSE) |
 
-### نصب نسخهٔ توسعه
-
-پروژه در مرحلهٔ آماده‌سازی نخستین انتشار پایدار هست. برای بررسی پکیج در یک برنامهٔ لاراول ۱۳، مخزن را به کامپوزر معرفی و شاخهٔ توسعه را نصب کنید:
-
-```shell
-composer config repositories.bale vcs https://github.com/sajaddp/laravel-bale
-composer require sajaddp/laravel-bale:dev-main
-```
-
-این فرمان نسخهٔ توسعه را نصب می‌کند، نه نسخهٔ پایدار. وضعیت نسخه‌های برچسب‌خورده را در [صفحهٔ انتشارها](https://github.com/sajaddp/laravel-bale/releases) ببینید. پس از انتشار نسخهٔ پایدار در پکیجیست، فرمان معمول نصب چنین خواهد بود:
+### نصب پکیج
 
 ```shell
 composer require sajaddp/laravel-bale
@@ -426,7 +417,7 @@ Bale::askReview(
 
 ## نگه‌داری، منابع و مشارکت
 
-این پروژه را [سجاد ده‌شیری](https://github.com/sajaddp) نگه‌داری می‌کند و یک پکیج مستقل با [مجوز ام‌آی‌تی](LICENSE) هست؛ محصول رسمی تیم بله یا لاراول نیست. قراردادهای بله از [مستندات رسمی بازو](https://docs.bale.ai/) گرفته می‌شوند و ورودی و خروجی واقعی پکیج در [کد منبع](src/BaleClient.php) قابل‌بررسی هست.
+این پروژه را [سجاد ده‌شیری](https://github.com/sajaddp) نگه‌داری می‌کند و یک پکیج مستقل با [مجوز ام‌آی‌تی](LICENSE) هست؛ محصول رسمی تیم بله یا لاراول نیست. بستهٔ آن در [Packagist](https://packagist.org/packages/sajaddp/laravel-bale) در دسترس است. قراردادهای بله از [مستندات رسمی بازو](https://docs.bale.ai/) گرفته می‌شوند و ورودی و خروجی واقعی پکیج در [کد منبع](src/BaleClient.php) قابل‌بررسی هست.
 
 برای بررسی کیفیت، [آزمون‌ها](tests/Feature/BaleClientTest.php)، [اجرای آزمون‌های خودکار](https://github.com/sajaddp/laravel-bale/actions/workflows/tests.yml) و [تاریخچهٔ تغییرات](CHANGELOG.md) در دسترس هستند. اجرای محلی آزمون‌ها در نسخهٔ دریافت‌شده از مخزن:
 
