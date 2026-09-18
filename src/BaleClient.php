@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Sajaddp\Bale;
 
+use Closure;
+use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Http\Client\Request;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 use LogicException;
+use PHPUnit\Framework\Assert;
 use Sajaddp\Bale\Exceptions\BaleRequestException;
 use SplFileInfo;
 use stdClass;
@@ -110,6 +115,17 @@ class BaleClient
         return $this->requestBoolean('answerCallbackQuery', array_merge($options, [
             'callback_query_id' => $callbackQueryId,
         ]));
+    }
+
+    /**
+     * Ask a user to submit or edit a review for this Bale bot after a delay.
+     */
+    public function askReview(int $userId, int $delaySeconds): bool
+    {
+        return $this->requestBoolean('askReview', [
+            'user_id' => $userId,
+            'delay_seconds' => $delaySeconds,
+        ]);
     }
 
     /**
@@ -295,6 +311,68 @@ class BaleClient
     }
 
     /**
+     * Fake only this package's Bale API and file-download requests.
+     *
+     * The real client still builds requests and parses Bale response envelopes.
+     */
+    public function fake(): void
+    {
+        $botUrlPrefix = sprintf('https://tapi.bale.ai/bot%s/', $this->token());
+        $downloadUrlPrefix = sprintf('https://tapi.bale.ai/file/bot%s/', $this->token());
+
+        Http::fake(function (Request $request) use ($botUrlPrefix, $downloadUrlPrefix): ?PromiseInterface {
+            if (str_starts_with($request->url(), $downloadUrlPrefix)) {
+                return Http::response('Bale fake file download');
+            }
+
+            if (! str_starts_with($request->url(), $botUrlPrefix)) {
+                return null;
+            }
+
+            return $this->fakeResponseFor(substr($request->url(), strlen($botUrlPrefix)));
+        });
+    }
+
+    /**
+     * @param  array<string, mixed>|Closure(Request): bool|null  $condition
+     */
+    public function assertSent(string $method, array|Closure|null $condition = null): void
+    {
+        Assert::assertNotEmpty(
+            $this->recordedFor($method, $condition),
+            sprintf('Expected Bale method [%s] to be sent.', $method),
+        );
+    }
+
+    public function assertSentTimes(string $method, int $times): void
+    {
+        Assert::assertCount(
+            $times,
+            $this->recordedFor($method),
+            sprintf('Expected Bale method [%s] to be sent %d times.', $method, $times),
+        );
+    }
+
+    /**
+     * @param  array<string, mixed>|Closure(Request): bool|null  $condition
+     */
+    public function assertNotSent(string $method, array|Closure|null $condition = null): void
+    {
+        Assert::assertEmpty(
+            $this->recordedFor($method, $condition),
+            sprintf('Bale method [%s] was sent unexpectedly.', $method),
+        );
+    }
+
+    public function assertNothingSent(): void
+    {
+        Assert::assertEmpty(
+            Http::recorded(fn (Request $request): bool => $this->isBalePackageRequest($request)),
+            'Bale package HTTP requests were sent unexpectedly.',
+        );
+    }
+
+    /**
      * @param  array<string, mixed>  $data
      */
     private function request(string $method, array $data = [], int|float|null $transportTimeout = null): mixed
@@ -308,6 +386,114 @@ class BaleClient
         $response = $request->post($this->urlFor($method), $data);
 
         return $this->parseResponse($response);
+    }
+
+    private function fakeResponseFor(string $method): ?PromiseInterface
+    {
+        if (in_array($method, [
+            'setWebhook',
+            'deleteWebhook',
+            'sendChatAction',
+            'answerCallbackQuery',
+            'deleteMessage',
+            'askReview',
+        ], true)) {
+            return Http::response(['ok' => true, 'result' => true]);
+        }
+
+        if (in_array($method, [
+            'editMessageText',
+            'editMessageCaption',
+            'editMessageReplyMarkup',
+        ], true)) {
+            return Http::response(['ok' => true, 'result' => true]);
+        }
+
+        if ($method === 'getFile') {
+            return Http::response([
+                'ok' => true,
+                'result' => [
+                    'file_id' => 'bale-fake-file',
+                    'file_unique_id' => 'bale-fake-file',
+                    'file_size' => 0,
+                    'file_path' => 'bale-fake/file',
+                ],
+            ]);
+        }
+
+        if (in_array($method, [
+            'getMe',
+            'sendMessage',
+            'getWebhookInfo',
+            'forwardMessage',
+            'copyMessage',
+            'getUpdates',
+            'sendPhoto',
+            'sendAudio',
+            'sendDocument',
+            'sendVideo',
+            'sendAnimation',
+            'sendVoice',
+            'sendMediaGroup',
+            'sendLocation',
+            'sendContact',
+        ], true)) {
+            return Http::response(['ok' => true, 'result' => []]);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  array<string, mixed>|Closure(Request): bool|null  $condition
+     * @return Collection<int, array{0: Request, 1: Response|null}>
+     */
+    private function recordedFor(string $method, array|Closure|null $condition = null): Collection
+    {
+        return Http::recorded(function (Request $request) use ($method, $condition): bool {
+            if ($request->url() !== $this->urlFor($method)) {
+                return false;
+            }
+
+            if (is_array($condition)) {
+                return $this->payloadContains($request->data(), $condition);
+            }
+
+            return $condition === null || $condition($request);
+        });
+    }
+
+    /**
+     * @param  array<mixed>  $actual
+     * @param  array<mixed>  $expected
+     */
+    private function payloadContains(array $actual, array $expected): bool
+    {
+        foreach ($expected as $key => $value) {
+            if (! array_key_exists($key, $actual)) {
+                return false;
+            }
+
+            if (is_array($value)) {
+                if (! is_array($actual[$key]) || ! $this->payloadContains($actual[$key], $value)) {
+                    return false;
+                }
+
+                continue;
+            }
+
+            if ($actual[$key] !== $value) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function isBalePackageRequest(Request $request): bool
+    {
+        return str_starts_with($request->url(), sprintf('https://tapi.bale.ai/bot%s/', $this->token()))
+            || str_starts_with($request->url(), sprintf('https://tapi.bale.ai/file/bot%s/', $this->token()));
     }
 
     /**

@@ -1,0 +1,38 @@
+name: Feature request
+description: Propose a small, Bale-documented package improvement.
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or workflow
+      description: What concrete developer problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Proposed outcome
+    validations:
+      required: true
+  - type: dropdown
+    id: documented
+    attributes:
+      label: Is the needed Bale API officially documented?
+      options:
+        - 'Yes'
+        - 'No'
+        - 'Not sure'
+    validations:
+      required: true
+  - type: input
+    id: documentation
+    attributes:
+      label: Link to Bale documentation, if applicable
+  - type: textarea
+    id: insufficient
+    attributes:
+      label: Why is the current package API insufficient?
+      description: Do not infer behavior from Telegram compatibility.
+    validations:
+      required: true

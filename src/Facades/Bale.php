@@ -34,6 +34,12 @@ use Sajaddp\Bale\BaleClient;
  * @method static array<mixed> sendContact(int|string $chatId, int|string $phoneNumber, string $firstName, array<string, mixed> $options = [])
  * @method static array<mixed> getFile(string $fileId)
  * @method static string downloadFile(string $fileId)
+ * @method static bool askReview(int $userId, int $delaySeconds)
+ * @method static void fake()
+ * @method static void assertSent(string $method, array<string, mixed>|\Closure(\Illuminate\Http\Client\Request): bool|null $condition = null)
+ * @method static void assertSentTimes(string $method, int $times)
+ * @method static void assertNotSent(string $method, array<string, mixed>|\Closure(\Illuminate\Http\Client\Request): bool|null $condition = null)
+ * @method static void assertNothingSent()
  */
 class Bale extends Facade
 {

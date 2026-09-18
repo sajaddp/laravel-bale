@@ -1,5 +1,7 @@
 # Laravel Bale — پکیج Laravel 13 برای Bale Bot API
 
+[![Tests](https://github.com/sajaddp/laravel-bale/actions/workflows/tests.yml/badge.svg)](https://github.com/sajaddp/laravel-bale/actions/workflows/tests.yml)
+
 A minimal Laravel 13 integration for the Bale Bot API.
 
 `sajaddp/laravel-bale` یک کلاینت کم‌حجم برای فراخوانی Bale Bot API در Laravel 13 است. این پکیج PHP 8.3+ را پشتیبانی می‌کند، پاسخ‌های مستند بله را به آرایه یا مقدار نتیجه تبدیل می‌کند و عمداً یک bot framework نیست.
@@ -39,6 +41,17 @@ Facade را صریحاً import کنید:
 use Sajaddp\Bale\Facades\Bale;
 ~~~
 
+## راهنمای عمیق‌تر
+
+README برای شروع سریع است. مستندات ساخت‌یافتهٔ مخزن جزئیات و مرجع کامل را نگه می‌دارند:
+
+- [شروع کار](docs/getting-started.md)
+- [مرجع API](docs/api-reference.md)
+- [پوشش Bale Bot API](docs/api-coverage.md)
+- [تست](docs/testing.md)
+- [دستورپخت‌ها](docs/recipes.md)
+- [رفع اشکال](docs/troubleshooting.md)
+
 ## شروع سریع: چطور با Laravel به بله پیام بفرستیم؟
 
 ~~~php
@@ -68,6 +81,7 @@ $message = Bale::sendMessage(
 | Webhook | `getWebhookInfo` | اطلاعات Webhook | `array` |
 | Updates | `getUpdates` | دریافت یک‌بارهٔ Updateها | `array` |
 | Callbacks | `answerCallbackQuery` | پاسخ به Callback Query | `bool` |
+| Review | `askReview` | درخواست ثبت یا ویرایش نظر دربارهٔ بازو | `bool` |
 | Message operations | `editMessageText` / `editMessageCaption` / `editMessageReplyMarkup` | ویرایش پیام یا Inline Keyboard | نتیجهٔ خام Bale |
 | Message operations | `deleteMessage` | حذف پیام | `bool` |
 | Media / files | `sendPhoto` / `sendAudio` / `sendDocument` / `sendVideo` / `sendAnimation` / `sendVoice` | ارسال یک رسانه | `array` |
@@ -83,6 +97,36 @@ $message = Bale::sendMessage(
 | --- | --- | --- |
 | `replyToMessage` | `sendMessage` و `reply_to_message_id` | `array` |
 | `downloadFile` | `getFile` و دانلود فایل مستندشدهٔ Bale | `string` binary |
+
+## درخواست نظر با `askReview`
+
+`askReview` یک wrapper رسمی Bale Bot API است، نه helper پکیج. طبق مستندات رسمی، برای نمایش فرم ثبت یا ویرایش نظر دربارهٔ بازو به کار می‌رود؛ نمایش نهایی آن به پشتیبانی نسخهٔ Bale client و شرایط کاربر بستگی دارد.
+
+~~~php
+Bale::askReview(
+    userId: 123456789,
+    delaySeconds: 30,
+);
+~~~
+
+هر دو مقدار integer و الزامی‌اند. `delaySeconds` تأخیر نمایش فرم از زمان فراخوانی را برحسب ثانیه تعیین می‌کند و پاسخ موفق Bale برابر `true` است.
+
+## تست ربات بله در Laravel بدون درخواست واقعی
+
+برای تست integration لازم نیست URLهای Bale، envelope پاسخ یا جزئیات `Http::fake()` را بدانید:
+
+~~~php
+Bale::fake();
+
+$order->confirm();
+
+Bale::assertSent('sendMessage', [
+    'chat_id' => 123456789,
+    'text' => 'سفارش شما تأیید شد',
+]);
+~~~
+
+`Bale::fake()` فقط درخواست‌های Bot API و دانلود فایلِ همین پکیج را fake می‌کند؛ HTTP نامرتبط برنامه را جعل یا جزو assertionها حساب نمی‌کند. API تست عبارت است از `Bale::fake()`، `Bale::assertSent()`، `Bale::assertSentTimes()`، `Bale::assertNotSent()` و `Bale::assertNothingSent()`. assertionها endpoint رسمی مانند `sendMessage` را می‌بینند، نه convenience methodهایی مانند `replyToMessage`. برای مثال پیشرفته‌تر و تست رسانه به [راهنمای تست](docs/testing.md) مراجعه کنید.
 
 ## چطور به یک پیام بله پاسخ بدهیم؟
 
@@ -316,8 +360,7 @@ php artisan boost:install
 - keyboard builder و helper ترکیبی callback+edit
 - تشخیص خودکار مسیر فایل محلی
 - public file URL حاوی bot token
-- `Storage` abstraction یا helperهایی مانند `saveFile`
-- روش رسمی Bale Bot API به نام `askReview` که این پکیج در حال حاضر پیاده‌سازی نمی‌کند
+- `Storage` abstraction یا helper اختصاصی برای ذخیرهٔ فایل
 
 این مرزها intentional هستند: Laravel Bale یک API client باقی می‌ماند، نه یک framework.
 

@@ -23,6 +23,28 @@ $message = Bale::sendMessage(
 
 Required arguments always win over conflicting option keys. Pass only Bale-documented optional values through options.
 
+## Review requests and tests
+
+`askReview` is an official Bale wrapper. It requires integer `userId` and integer `delaySeconds` and returns the documented boolean result. It asks the client to show a form for a user to submit or edit a review; do not promise that every client version will display it.
+
+~~~php
+Bale::askReview(userId: 123456789, delaySeconds: 30);
+~~~
+
+For package-level behavior, prefer the built-in fake over hand-written Bale URL and envelope fakes. It keeps real `BaleClient` payload construction and response parsing active, fakes only this package's Bale traffic, and assertions use official endpoint names.
+
+~~~php
+Bale::fake();
+
+Bale::sendMessage(chatId: 123456789, text: 'سلام');
+
+Bale::assertSent('sendMessage', ['chat_id' => 123456789]);
+Bale::assertSentTimes('sendMessage', 1);
+Bale::assertNotSent('sendDocument');
+~~~
+
+`assertSent` and `assertNotSent` also accept a callback receiving Laravel's `Illuminate\Http\Client\Request`, for example to verify multipart upload behavior. Use Laravel `Http::fake()` directly for deliberately malformed or error response envelopes.
+
 ## Laravel Bale convenience methods
 
 `replyToMessage` and `downloadFile` are package conveniences, not Bale Bot API endpoints. Do not describe them as official methods or add aliases for them.
