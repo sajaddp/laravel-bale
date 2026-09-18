@@ -140,7 +140,7 @@ it('rejects raw Bale messages without the fields needed to reply before sending 
     'non-array chat' => [['message_id' => 12, 'chat' => '123']],
     'missing chat id' => [['message_id' => 12, 'chat' => []]],
     'invalid chat id' => [['message_id' => 12, 'chat' => ['id' => []]]],
-    'empty string chat id' => [['message_id' => 12, 'chat' => ['id' => '']]],
+    'string chat id' => [['message_id' => 12, 'chat' => ['id' => 'not-a-bale-chat-id']]],
 ]);
 
 it('configures, removes, and inspects a webhook using Bale payloads', function (): void {

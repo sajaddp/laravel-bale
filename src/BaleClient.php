@@ -51,8 +51,8 @@ class BaleClient
         $chat = $message['chat'] ?? null;
         $chatId = is_array($chat) ? ($chat['id'] ?? null) : null;
 
-        if (! is_int($messageId) || (! is_int($chatId) && (! is_string($chatId) || trim($chatId) === ''))) {
-            throw new InvalidArgumentException('Bale message must contain an integer message_id and a usable chat.id.');
+        if (! is_int($messageId) || ! is_int($chatId)) {
+            throw new InvalidArgumentException('Bale message must contain an integer message_id and integer chat.id.');
         }
 
         return $this->sendMessage($chatId, $text, array_merge($options, [

@@ -27,7 +27,7 @@ Required arguments always win over conflicting option keys. Pass only Bale-docum
 
 `replyToMessage` and `downloadFile` are package conveniences, not Bale Bot API endpoints. Do not describe them as official methods or add aliases for them.
 
-Use `replyToMessage` when application code already has a raw Bale Message array. It reads only `message_id` and `chat.id`, then composes `sendMessage`; those workflow values cannot be replaced through `options`. Invalid required fields throw `InvalidArgumentException` before an HTTP request.
+Use `replyToMessage` when application code already has a raw Bale Message array. It requires integer `message_id` and integer `chat.id`, then composes `sendMessage`; those workflow values cannot be replaced through `options`. Invalid required fields throw `InvalidArgumentException` before an HTTP request.
 
 ~~~php
 Bale::replyToMessage(

@@ -110,7 +110,7 @@ Bale::replyToMessage(
 );
 ~~~
 
-این متد فقط `message_id` صحیح و `chat.id` قابل‌استفاده را از raw Bale Message array می‌خواند و سپس `sendMessage` را فراخوانی می‌کند. `chat_id`، `text` و `reply_to_message_id` از خود workflow می‌آیند و با `options` قابل جایگزینی نیستند. شکل کامل Message اعتبارسنجی یا DTO نمی‌شود؛ ورودی ناقص پیش از هر درخواست HTTP با `InvalidArgumentException` رد می‌شود.
+این متد فقط `message_id` صحیح و `chat.id` صحیح را از raw Bale Message array می‌خواند؛ هر دو باید integer باشند. سپس `sendMessage` را فراخوانی می‌کند. `chat_id`، `text` و `reply_to_message_id` از خود workflow می‌آیند و با `options` قابل جایگزینی نیستند. شکل کامل Message اعتبارسنجی یا DTO نمی‌شود؛ ورودی ناقص پیش از هر درخواست HTTP با `InvalidArgumentException` رد می‌شود.
 
 ## چطور دکمه Inline Keyboard و Callback Query بسازیم؟
 
@@ -231,13 +231,11 @@ $updates = Bale::getUpdates([
 
 ## راه‌اندازی Webhook در Laravel
 
-ابتدا endpoint خروجی Bale را پیکربندی کنید. دریافت درخواست ورودی یک responsibility در اپلیکیشن Laravel است، نه قابلیتی که پکیج route آن را بسازد:
+یک راه کامل Laravel 13 این است که route را در `routes/web.php` نگه دارید و فقط همان URI را از CSRF خارج کنید. route زیر دقیقاً این URL عمومی را می‌سازد: `https://example.test/bale/webhook`.
 
 ~~~php
-Bale::setWebhook('https://example.test/bale/webhook');
-~~~
+// routes/web.php
 
-~~~php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -246,6 +244,24 @@ Route::post('/bale/webhook', function (Request $request) {
 
     // application logic
 });
+~~~
+
+چون `routes/web.php` در middleware گروه `web` قرار دارد، POST خارجی Bale CSRF token ندارد. در `bootstrap/app.php`، callback موجود `withMiddleware` را این‌گونه کامل کنید تا فقط همان مسیر مستثنا شود:
+
+~~~php
+use Illuminate\Foundation\Configuration\Middleware;
+
+->withMiddleware(function (Middleware $middleware): void {
+    $middleware->preventRequestForgery(except: [
+        'bale/webhook',
+    ]);
+})
+~~~
+
+حالا URL ثبت‌شده در Bale دقیقاً با route یکی است:
+
+~~~php
+Bale::setWebhook('https://example.test/bale/webhook');
 ~~~
 
 برای مشاهده یا حذف تنظیمات خروجی از `getWebhookInfo()` و `deleteWebhook()` استفاده کنید. پکیج webhook router، controller، middleware یا secret validation اختراع نمی‌کند.
@@ -301,7 +317,7 @@ php artisan boost:install
 - تشخیص خودکار مسیر فایل محلی
 - public file URL حاوی bot token
 - `Storage` abstraction یا helperهایی مانند `saveFile`
-- MiniApp API مانند `askReview`
+- روش رسمی Bale Bot API به نام `askReview` که این پکیج در حال حاضر پیاده‌سازی نمی‌کند
 
 این مرزها intentional هستند: Laravel Bale یک API client باقی می‌ماند، نه یک framework.
 
