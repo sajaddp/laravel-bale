@@ -7,15 +7,9 @@ description: Implement or modify Bale Bot API integrations with the laravel-bale
 
 Use this skill when working on a Bale Bot API integration.
 
-Configure the bot token in the application's environment:
+Configure BALE_BOT_TOKEN, import Sajaddp\Bale\Facades\Bale, and use only the package API that exists. Do not infer Telegram-only methods, fields, or behavior.
 
-```dotenv
-BALE_BOT_TOKEN=your-bot-token
-```
-
-Import the explicit facade and use only the package API that exists:
-
-```php
+~~~php
 use Sajaddp\Bale\Facades\Bale;
 
 $bot = Bale::getMe();
@@ -23,17 +17,56 @@ $bot = Bale::getMe();
 $message = Bale::sendMessage(
     chatId: 123456789,
     text: 'سلام',
-    options: [
-        'reply_to_message_id' => 123,
-    ],
+    options: ['reply_to_message_id' => 123],
 );
-```
+~~~
 
-Pass only Bale-supported optional `sendMessage` values in `options`; `chatId` and `text` always take precedence over conflicting option keys.
+Required arguments always win over conflicting option keys. Pass only Bale-documented optional values through options.
 
-Handle Bale API failures explicitly:
+## Webhook configuration
 
-```php
+Configure outgoing delivery with Bale::setWebhook('https://example.com/bale/updates'), inspect it with Bale::getWebhookInfo(), and remove it with Bale::deleteWebhook().
+
+This package does not provide a webhook router, controller, middleware, or incoming route. Receive Bale JSON updates through normal Laravel routing and controllers.
+
+## Callbacks and actions
+
+~~~php
+Bale::answerCallbackQuery(
+    callbackQueryId: $update['callback_query']['id'],
+    options: ['text' => 'انجام شد', 'show_alert' => true],
+);
+
+Bale::sendChatAction(chatId: 123456789, action: 'upload_photo');
+~~~
+
+Answer every callback query to clear the inline button waiting state. If its identifier starts with 1, the user is on an older Bale client that does not support callback feedback; implement any application fallback yourself.
+
+## Message operations
+
+~~~php
+Bale::forwardMessage(chatId: '@target', fromChatId: 123456789, messageId: 42);
+Bale::copyMessage(chatId: '@target', fromChatId: 123456789, messageId: 42);
+
+Bale::editMessageText(chatId: 123456789, messageId: 42, text: 'متن جدید');
+Bale::editMessageCaption(
+    chatId: 123456789,
+    messageId: 42,
+    options: ['caption' => 'زیرنویس جدید'],
+);
+Bale::editMessageReplyMarkup(
+    chatId: 123456789,
+    messageId: 42,
+    options: ['reply_markup' => $replyMarkup],
+);
+Bale::deleteMessage(chatId: 123456789, messageId: 42);
+~~~
+
+setWebhook, deleteWebhook, sendChatAction, answerCallbackQuery, and deleteMessage return booleans. Bale result objects are returned as arrays.
+
+Handle Bale API failures explicitly and test application code with Laravel's HTTP fake rather than real requests.
+
+~~~php
 use Sajaddp\Bale\Exceptions\BaleRequestException;
 
 try {
@@ -41,6 +74,4 @@ try {
 } catch (BaleRequestException $exception) {
     report($exception->description);
 }
-```
-
-Test application code with Laravel's HTTP fake rather than real requests. Do not infer unsupported Bale APIs from Telegram compatibility.
+~~~
