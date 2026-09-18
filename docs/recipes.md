@@ -1,11 +1,11 @@
 ---
-title: دستورپخت‌های Laravel Bale
-description: نمونه‌های کوتاه و واقعی Laravel Bale برای پیام، رسانه، Callback، دریافت دوره‌ای، وب‌هوک و تست.
+title: دستورپخت‌های لاراول بله
+description: نمونه‌های کوتاه و واقعی لاراول بله برای پیام، رسانه، پاسخ انتخاب، دریافت دوره‌ای، وب‌هوک و آزمون.
 ---
 
 # دستورپخت‌ها
 
-همهٔ مثال‌ها از API واقعی پکیج استفاده می‌کنند. برای امضاها به [مرجع API](api-reference.md) مراجعه کنید.
+همهٔ مثال‌ها از متدهای واقعی پکیج استفاده می‌کنند. برای امضاها به [مرجع رابط برنامه‌نویسی](api-reference.md) مراجعه کنید.
 
 ## ارسال پیام
 
@@ -19,7 +19,7 @@ Bale::sendMessage(chatId: 123456789, text: 'سلام');
 Bale::replyToMessage($update['message'], 'پاسخ شما');
 ~~~
 
-## دکمه‌های درون‌خطی و Callback Query
+## دکمه‌های درون‌خطی و پاسخ انتخاب
 
 ~~~php
 Bale::sendMessage(
@@ -42,7 +42,7 @@ Bale::sendDocument(
 );
 ~~~
 
-## استفادهٔ دوباره از file_id
+## استفادهٔ دوباره از شناسهٔ فایل
 
 ~~~php
 Bale::sendDocument(chatId: 123456789, document: 'bale-file-id');
@@ -72,7 +72,7 @@ Bale::sendMediaGroup(
 );
 ~~~
 
-## دریافت دوره‌ای با getUpdates
+## دریافت دوره‌ای با `getUpdates`
 
 ~~~php
 $updates = Bale::getUpdates(['offset' => $nextOffset, 'timeout' => 30]);
@@ -80,7 +80,7 @@ $updates = Bale::getUpdates(['offset' => $nextOffset, 'timeout' => 30]);
 
 این فقط یک درخواست است؛ حلقه و ذخیرهٔ `offset` بر عهدهٔ برنامهٔ شماست.
 
-## وب‌هوک در Laravel 13
+## وب‌هوک در لاراول ۱۳
 
 ~~~php
 // routes/web.php
@@ -92,13 +92,13 @@ Bale::setWebhook('https://example.test/bale/webhook');
 
 برای جزئیات 419 به [رفع اشکال](troubleshooting.md) مراجعه کنید. پکیج مسیر یا کنترل‌کننده نمی‌سازد.
 
-## askReview
+## `askReview`
 
 ~~~php
 Bale::askReview(userId: 123456789, delaySeconds: 30);
 ~~~
 
-## تست اتصال به Bale
+## آزمون اتصال به بله
 
 ~~~php
 Bale::fake();
@@ -108,4 +108,4 @@ Bale::sendMessage(chatId: 123456789, text: 'سلام');
 Bale::assertSent('sendMessage', ['text' => 'سلام']);
 ~~~
 
-جزئیات در [راهنمای تست](testing.md) است.
+جزئیات در [راهنمای آزمون](testing.md) است.
