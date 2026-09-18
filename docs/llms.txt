@@ -1,0 +1,16 @@
+# Laravel Bale
+
+Laravel 13 package documentation for the Bale Bot API. Canonical documentation:
+https://sajaddp.github.io/laravel-bale/
+
+GitHub repository: https://github.com/sajaddp/laravel-bale
+
+Authoritative documentation pages:
+- Getting Started: https://sajaddp.github.io/laravel-bale/getting-started/
+- API Reference: https://sajaddp.github.io/laravel-bale/api-reference/
+- Bale API Coverage: https://sajaddp.github.io/laravel-bale/api-coverage/
+- Testing: https://sajaddp.github.io/laravel-bale/testing/
+- Webhooks: https://sajaddp.github.io/laravel-bale/webhooks/
+- Files and Media: https://sajaddp.github.io/laravel-bale/files-media/
+- Troubleshooting: https://sajaddp.github.io/laravel-bale/troubleshooting/
+- AI Coding: https://sajaddp.github.io/laravel-bale/ai-coding/

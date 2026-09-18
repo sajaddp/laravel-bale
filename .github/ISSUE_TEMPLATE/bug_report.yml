@@ -1,0 +1,53 @@
+name: Bug report
+description: Report a reproducible problem in laravel-bale.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include BALE_BOT_TOKEN, bot credentials, or token-bearing file URLs.
+  - type: input
+    id: package-version
+    attributes:
+      label: laravel-bale version or commit
+    validations:
+      required: true
+  - type: input
+    id: laravel-version
+    attributes:
+      label: Laravel version
+    validations:
+      required: true
+  - type: input
+    id: php-version
+    attributes:
+      label: PHP version
+    validations:
+      required: true
+  - type: input
+    id: bale-method
+    attributes:
+      label: Bale method involved
+      placeholder: sendMessage
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Share the smallest safe code or test that reproduces the problem.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and relevant exception
+      description: Redact secrets and token-bearing URLs.
+    validations:
+      required: true

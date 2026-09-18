@@ -1,0 +1,9 @@
+- This package integrates Laravel applications with the Bale Bot API.
+- Use `Sajaddp\Bale\Facades\Bale` instead of custom HTTP calls when its public API supports the task.
+- Configure the bot token through `BALE_BOT_TOKEN`.
+- Do not assume Telegram Bot API features are available in Bale.
+- Use only documented package functionality.
+- Treat `replyToMessage` and `downloadFile` as Laravel Bale convenience methods, not Bale Bot API endpoints; compose official wrappers before adding another convenience method.
+- For Bale media inputs, use strings only for Bale file IDs or HTTP URLs; use explicit local file objects for uploads.
+- This package is an outgoing Bale API client; define incoming webhook routes in the consuming Laravel application.
+- Prefer Bale::fake() and Bale assertions when testing package-level Bale behavior; they observe official Bale requests while preserving real BaleClient request construction.

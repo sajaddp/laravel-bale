@@ -1,0 +1,74 @@
+{
+  "$schema": "https://getcomposer.org/schema.json",
+  "name": "sajaddp/laravel-bale",
+  "description": "A minimal Laravel integration for the Bale Bot API.",
+  "keywords": [
+    "bale",
+    "bale-bot",
+    "bale-bot-api",
+    "bale-messenger",
+    "laravel",
+    "laravel-package",
+    "bot-api",
+    "chatbot"
+  ],
+  "homepage": "https://github.com/sajaddp/laravel-bale",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Sajad Dehshiri",
+      "email": "sajaddp71@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "^8.3",
+    "illuminate/http": "^13.0",
+    "illuminate/support": "^13.0"
+  },
+  "require-dev": {
+    "larastan/larastan": "^3.9",
+    "laravel/pint": "^1.29",
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^4.6",
+    "pestphp/pest-plugin-laravel": "^4.1",
+    "phpstan/extension-installer": "^1.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Sajaddp\\Bale\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Sajaddp\\Bale\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "analyse": "vendor/bin/phpstan analyse",
+    "lint": "vendor/bin/pint --parallel",
+    "lint:check": "vendor/bin/pint --parallel --test",
+    "test:unit": "vendor/bin/pest",
+    "test": [
+      "@analyse",
+      "@lint:check",
+      "@test:unit"
+    ]
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Sajaddp\\Bale\\BaleServiceProvider"
+      ]
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "phpstan/extension-installer": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}

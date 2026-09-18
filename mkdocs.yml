@@ -1,0 +1,68 @@
+site_name: "Laravel Bale — مستندات Laravel برای Bale Bot API"
+site_url: "https://sajaddp.github.io/laravel-bale/"
+site_description: "مستندات فارسی Laravel Bale برای Bale Bot API در Laravel 13 و PHP 8.3+"
+site_author: "Sajad Dehshiri"
+repo_url: "https://github.com/sajaddp/laravel-bale"
+repo_name: "sajaddp/laravel-bale"
+edit_uri: "edit/main/docs/"
+use_directory_urls: true
+
+theme:
+  name: material
+  language: fa
+  direction: rtl
+  font: false
+  features:
+    - content.action.edit
+    - content.code.copy
+    - navigation.footer
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-sunny
+        name: استفاده از حالت تیره
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-night
+        name: استفاده از حالت روشن
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+
+extra_css:
+  - stylesheets/extra.css
+
+copyright: "Laravel Bale · <a href=\"https://github.com/sajaddp/laravel-bale\">GitHub</a> · <a href=\"https://github.com/sajaddp/laravel-bale/blob/main/LICENSE\">MIT License</a>"
+
+nav:
+  - خانه: index.md
+  - شروع:
+      - شروع سریع: getting-started.md
+      - پیام‌ها: messages.md
+  - راهنماها:
+      - Webhook: webhooks.md
+      - Polling: polling.md
+      - فایل و رسانه: files-media.md
+      - Callback و Keyboard: callbacks-keyboards.md
+      - تست: testing.md
+      - دستورپخت‌ها: recipes.md
+  - مرجع:
+      - API Reference: api-reference.md
+      - Bale API Coverage: api-coverage.md
+      - رفع اشکال: troubleshooting.md
+  - AI Coding: ai-coding.md
+  - پروژه:
+      - GitHub Repository: https://github.com/sajaddp/laravel-bale
