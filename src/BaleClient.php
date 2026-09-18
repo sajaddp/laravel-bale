@@ -189,9 +189,18 @@ class BaleClient
     /** @param array<mixed> $payload */
     private function isValidErrorEnvelope(array $payload): bool
     {
+        if (array_key_exists('parameters', $payload)) {
+            if (! is_array($payload['parameters'])) {
+                return false;
+            }
+
+            if (array_key_exists('retry_after', $payload['parameters']) && ! is_int($payload['parameters']['retry_after'])) {
+                return false;
+            }
+        }
+
         return is_int($payload['error_code'] ?? null)
-            && (! array_key_exists('description', $payload) || is_string($payload['description']))
-            && (! array_key_exists('parameters', $payload) || is_array($payload['parameters']));
+            && (! array_key_exists('description', $payload) || is_string($payload['description']));
     }
 
     private function urlFor(string $method): string
