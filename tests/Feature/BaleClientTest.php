@@ -98,6 +98,51 @@ it('does not allow options to override required sendMessage values', function ()
     });
 });
 
+it('replies to a Bale message with required values taking precedence over options', function (): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/sendMessage' => Http::response([
+            'ok' => true,
+            'result' => ['message_id' => 101],
+        ]),
+    ]);
+
+    expect(Bale::replyToMessage(
+        message: ['message_id' => 12, 'chat' => ['id' => 123456789]],
+        text: 'پاسخ واقعی',
+        options: [
+            'reply_markup' => ['inline_keyboard' => []],
+            'chat_id' => 999,
+            'text' => 'متن نادرست',
+            'reply_to_message_id' => 999,
+        ],
+    ))->toBe(['message_id' => 101]);
+
+    Http::assertSent(function (Request $request): bool {
+        return $request->url() === 'https://tapi.bale.ai/bottest-token/sendMessage'
+            && $request->data() === [
+                'reply_markup' => ['inline_keyboard' => []],
+                'chat_id' => 123456789,
+                'text' => 'پاسخ واقعی',
+                'reply_to_message_id' => 12,
+            ];
+    });
+});
+
+it('rejects raw Bale messages without the fields needed to reply before sending a request', function (array $message): void {
+    expect(fn (): array => Bale::replyToMessage($message, 'پاسخ'))
+        ->toThrow(InvalidArgumentException::class);
+
+    Http::assertNothingSent();
+})->with([
+    'missing message id' => [['chat' => ['id' => 123]]],
+    'non-integer message id' => [['message_id' => '12', 'chat' => ['id' => 123]]],
+    'missing chat' => [['message_id' => 12]],
+    'non-array chat' => [['message_id' => 12, 'chat' => '123']],
+    'missing chat id' => [['message_id' => 12, 'chat' => []]],
+    'invalid chat id' => [['message_id' => 12, 'chat' => ['id' => []]]],
+    'empty string chat id' => [['message_id' => 12, 'chat' => ['id' => '']]],
+]);
+
 it('configures, removes, and inspects a webhook using Bale payloads', function (): void {
     Http::fake([
         'https://tapi.bale.ai/bottest-token/setWebhook' => Http::response(['ok' => true, 'result' => true]),
@@ -987,6 +1032,63 @@ it('sends documented location and contact fields and gets file metadata', functi
         return $request->url() === 'https://tapi.bale.ai/bottest-token/getFile'
             && $request->data() === ['file_id' => 'file-1'];
     });
+});
+
+it('downloads a Bale file through the documented two-request workflow', function (): void {
+    $binaryBody = "\x00Bale\xff\x10";
+
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getFile' => Http::response([
+            'ok' => true,
+            'result' => ['file_id' => 'file-1', 'file_path' => 'documents/example.pdf'],
+        ]),
+        'https://tapi.bale.ai/file/bottest-token/documents/example.pdf' => Http::response($binaryBody),
+    ]);
+
+    expect(Bale::downloadFile('file-1'))->toBe($binaryBody);
+
+    Http::assertSentCount(2);
+    Http::assertSent(function (Request $request): bool {
+        return $request->url() === 'https://tapi.bale.ai/bottest-token/getFile'
+            && $request->method() === 'POST'
+            && $request->data() === ['file_id' => 'file-1'];
+    });
+    Http::assertSent(function (Request $request): bool {
+        return $request->url() === 'https://tapi.bale.ai/file/bottest-token/documents/example.pdf'
+            && $request->method() === 'GET';
+    });
+});
+
+it('rejects unusable Bale file metadata before downloading', function (array $file): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getFile' => Http::response([
+            'ok' => true,
+            'result' => $file,
+        ]),
+    ]);
+
+    expect(fn (): string => Bale::downloadFile('file-1'))
+        ->toThrow(UnexpectedValueException::class, 'usable file_path');
+
+    Http::assertSentCount(1);
+})->with([
+    'missing file path' => [['file_id' => 'file-1']],
+    'null file path' => [['file_id' => 'file-1', 'file_path' => null]],
+    'empty file path' => [['file_id' => 'file-1', 'file_path' => '']],
+    'non-string file path' => [['file_id' => 'file-1', 'file_path' => 123]],
+]);
+
+it('preserves Laravel HTTP client failures while downloading a Bale file', function (): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getFile' => Http::response([
+            'ok' => true,
+            'result' => ['file_id' => 'file-1', 'file_path' => 'documents/missing.pdf'],
+        ]),
+        'https://tapi.bale.ai/file/bottest-token/documents/missing.pdf' => Http::response('Not found', 404),
+    ]);
+
+    expect(fn (): string => Bale::downloadFile('file-1'))
+        ->toThrow(RequestException::class);
 });
 
 it('fails before sending a request when a local upload is unreadable', function (): void {

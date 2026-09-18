@@ -23,6 +23,28 @@ $message = Bale::sendMessage(
 
 Required arguments always win over conflicting option keys. Pass only Bale-documented optional values through options.
 
+## Laravel Bale convenience methods
+
+`replyToMessage` and `downloadFile` are package conveniences, not Bale Bot API endpoints. Do not describe them as official methods or add aliases for them.
+
+Use `replyToMessage` when application code already has a raw Bale Message array. It reads only `message_id` and `chat.id`, then composes `sendMessage`; those workflow values cannot be replaced through `options`. Invalid required fields throw `InvalidArgumentException` before an HTTP request.
+
+~~~php
+Bale::replyToMessage(
+    message: $update['message'],
+    text: 'پاسخ شما',
+    options: ['reply_markup' => ['inline_keyboard' => []]],
+);
+~~~
+
+`getFile` is the official metadata request. `downloadFile` calls it, requires a non-empty string `file_path`, then returns the exact binary body. Store it with Laravel Storage only in the consuming application; this package has no Storage dependency and exposes no token-bearing file URL. A malformed file result throws `UnexpectedValueException`; a failed binary download retains Laravel `RequestException` semantics.
+
+~~~php
+use Illuminate\Support\Facades\Storage;
+
+Storage::put('bale/document.pdf', Bale::downloadFile($fileId));
+~~~
+
 ## Updates
 
 ~~~php
@@ -81,7 +103,7 @@ Bale::sendMediaGroup(
 );
 ~~~
 
-`sendLocation`, `sendContact`, and `getFile` return Bale result arrays. getFile retrieves metadata only; there is no download or Storage helper.
+`sendLocation`, `sendContact`, and `getFile` return Bale result arrays. `getFile` retrieves metadata; use the package convenience `downloadFile` when the binary body is needed.
 
 ## Webhook configuration
 

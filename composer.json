@@ -5,7 +5,12 @@
   "keywords": [
     "bale",
     "bale-bot",
-    "laravel"
+    "bale-bot-api",
+    "bale-messenger",
+    "laravel",
+    "laravel-package",
+    "bot-api",
+    "chatbot"
   ],
   "homepage": "https://github.com/sajaddp/laravel-bale",
   "license": "MIT",

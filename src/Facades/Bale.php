@@ -10,6 +10,7 @@ use Sajaddp\Bale\BaleClient;
 /**
  * @method static array<mixed> getMe()
  * @method static array<mixed> sendMessage(int|string $chatId, string $text, array<string, mixed> $options = [])
+ * @method static array<mixed> replyToMessage(array<string, mixed> $message, string $text, array<string, mixed> $options = [])
  * @method static bool setWebhook(string $url)
  * @method static bool deleteWebhook()
  * @method static array<mixed> getWebhookInfo()
@@ -32,6 +33,7 @@ use Sajaddp\Bale\BaleClient;
  * @method static array<mixed> sendLocation(int|string $chatId, float $latitude, float $longitude, array<string, mixed> $options = [])
  * @method static array<mixed> sendContact(int|string $chatId, int|string $phoneNumber, string $firstName, array<string, mixed> $options = [])
  * @method static array<mixed> getFile(string $fileId)
+ * @method static string downloadFile(string $fileId)
  */
 class Bale extends Facade
 {

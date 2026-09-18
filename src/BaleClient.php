@@ -38,6 +38,28 @@ class BaleClient
         ]));
     }
 
+    /**
+     * Reply to a raw Bale Message array using its documented chat and message identifiers.
+     *
+     * @param  array<string, mixed>  $message
+     * @param  array<string, mixed>  $options
+     * @return array<mixed>
+     */
+    public function replyToMessage(array $message, string $text, array $options = []): array
+    {
+        $messageId = $message['message_id'] ?? null;
+        $chat = $message['chat'] ?? null;
+        $chatId = is_array($chat) ? ($chat['id'] ?? null) : null;
+
+        if (! is_int($messageId) || (! is_int($chatId) && (! is_string($chatId) || trim($chatId) === ''))) {
+            throw new InvalidArgumentException('Bale message must contain an integer message_id and a usable chat.id.');
+        }
+
+        return $this->sendMessage($chatId, $text, array_merge($options, [
+            'reply_to_message_id' => $messageId,
+        ]));
+    }
+
     public function setWebhook(string $url): bool
     {
         return $this->requestBoolean('setWebhook', ['url' => $url]);
@@ -255,6 +277,21 @@ class BaleClient
     public function getFile(string $fileId): array
     {
         return $this->requestArray('getFile', ['file_id' => $fileId]);
+    }
+
+    /**
+     * Download a Bale file's binary body after retrieving its metadata.
+     */
+    public function downloadFile(string $fileId): string
+    {
+        $file = $this->getFile($fileId);
+        $filePath = $file['file_path'] ?? null;
+
+        if (! is_string($filePath) || $filePath === '') {
+            throw new UnexpectedValueException('Bale returned file metadata without a usable file_path.');
+        }
+
+        return Http::get($this->downloadUrlFor($filePath))->throw()->body();
     }
 
     /**
@@ -537,6 +574,11 @@ class BaleClient
     private function urlFor(string $method): string
     {
         return sprintf('https://tapi.bale.ai/bot%s/%s', $this->token(), $method);
+    }
+
+    private function downloadUrlFor(string $filePath): string
+    {
+        return sprintf('https://tapi.bale.ai/file/bot%s/%s', $this->token(), $filePath);
     }
 
     private function token(): string
