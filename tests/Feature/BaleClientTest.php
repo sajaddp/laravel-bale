@@ -337,12 +337,7 @@ it('does not return a successful Bale result from an unsuccessful HTTP response'
 
 it('throws an inspectable exception for Bale API failures with an integer retry_after', function (): void {
     Http::fake([
-        'https://tapi.bale.ai/bottest-token/getMe' => Http::response([
-            'ok' => false,
-            'error_code' => 429,
-            'description' => 'Too Many Requests',
-            'parameters' => ['retry_after' => 10],
-        ], 429),
+        'https://tapi.bale.ai/bottest-token/getMe' => Http::response('{"ok":false,"error_code":429,"description":"Too Many Requests","parameters":{"retry_after":10}}', 429),
     ]);
 
     $exception = null;
@@ -358,6 +353,24 @@ it('throws an inspectable exception for Bale API failures with an integer retry_
         ->and($exception->baleErrorCode)->toBe(429)
         ->and($exception->description)->toBe('Too Many Requests')
         ->and($exception->parameters['retry_after'])->toBe(10);
+});
+
+it('accepts an empty ResponseParameters object', function (): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getMe' => Http::response('{"ok":false,"error_code":400,"parameters":{}}'),
+    ]);
+
+    expect(fn (): array => Bale::getMe())
+        ->toThrow(BaleRequestException::class);
+});
+
+it('accepts unknown ResponseParameters object properties', function (): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getMe' => Http::response('{"ok":false,"error_code":400,"parameters":{"future_field":"value"}}'),
+    ]);
+
+    expect(fn (): array => Bale::getMe())
+        ->toThrow(BaleRequestException::class);
 });
 
 it('rejects malformed successful result shapes', function (): void {
@@ -407,6 +420,19 @@ it('rejects malformed Bale error envelopes', function (array $payload): void {
     'non-array parameters' => [['ok' => false, 'error_code' => 429, 'parameters' => 'retry']],
 ]);
 
+it('rejects ResponseParameters lists', function (string $parameters): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getMe' => Http::response('{"ok":false,"error_code":400,"parameters":'.$parameters.'}'),
+    ]);
+
+    expect(fn (): array => Bale::getMe())
+        ->toThrow(UnexpectedValueException::class, 'invalid API error response');
+})->with([
+    'empty list' => ['[]'],
+    'indexed list' => ['[10]'],
+    'object list' => ['[{"retry_after":10}]'],
+]);
+
 it('rejects malformed Bale retry_after values', function (mixed $retryAfter): void {
     Http::fake([
         'https://tapi.bale.ai/bottest-token/getMe' => Http::response([
@@ -443,6 +469,15 @@ it('preserves Laravel HTTP failures for malformed Bale retry_after values', func
             'error_code' => 429,
             'parameters' => ['retry_after' => '10'],
         ], 429),
+    ]);
+
+    expect(fn (): array => Bale::getMe())
+        ->toThrow(RequestException::class);
+});
+
+it('preserves Laravel HTTP failures for malformed ResponseParameters lists', function (): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getMe' => Http::response('{"ok":false,"error_code":400,"parameters":[]}', 400),
     ]);
 
     expect(fn (): array => Bale::getMe())

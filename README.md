@@ -118,7 +118,7 @@ Use only Bale-documented optional values in options. Documented Bale result obje
 
 ## Errors
 
-Bale API failures throw Sajaddp\Bale\Exceptions\BaleRequestException. The exception exposes baleErrorCode, description, and parameters.
+Valid Bale `ok: false` API responses throw Sajaddp\Bale\Exceptions\BaleRequestException. The exception exposes baleErrorCode, description, and parameters. Other unsuccessful HTTP responses that are not valid Bale error envelopes use Laravel HTTP client failure semantics and throw Illuminate\Http\Client\RequestException.
 
 ~~~php
 use Sajaddp\Bale\Exceptions\BaleRequestException;

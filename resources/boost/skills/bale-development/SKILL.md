@@ -64,7 +64,7 @@ Bale::deleteMessage(chatId: 123456789, messageId: 42);
 
 setWebhook, deleteWebhook, sendChatAction, answerCallbackQuery, and deleteMessage return booleans. Documented Bale result objects are arrays. Bale does not document a result type for message-editing methods, so they return Bale's raw result.
 
-Handle Bale API failures explicitly and test application code with Laravel's HTTP fake rather than real requests.
+Valid Bale `ok: false` API responses throw BaleRequestException. Other unsuccessful HTTP responses that are not valid Bale error envelopes use Laravel HTTP client failure semantics and throw Illuminate\Http\Client\RequestException. Test application code with Laravel's HTTP fake rather than real requests.
 
 ~~~php
 use Sajaddp\Bale\Exceptions\BaleRequestException;

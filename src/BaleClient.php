@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Sajaddp\Bale;
 
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use LogicException;
 use Sajaddp\Bale\Exceptions\BaleRequestException;
+use stdClass;
 use UnexpectedValueException;
 
 class BaleClient
@@ -141,7 +143,7 @@ class BaleClient
         }
 
         if ($payload['ok'] === false) {
-            if (! $this->isValidErrorEnvelope($payload)) {
+            if (! $this->isValidErrorEnvelope($payload, $response)) {
                 $response->throw();
 
                 throw new UnexpectedValueException('Bale returned an invalid API error response.');
@@ -187,10 +189,15 @@ class BaleClient
     }
 
     /** @param array<mixed> $payload */
-    private function isValidErrorEnvelope(array $payload): bool
+    private function isValidErrorEnvelope(array $payload, Response $response): bool
     {
         if (array_key_exists('parameters', $payload)) {
-            if (! is_array($payload['parameters'])) {
+            $rawPayload = json_decode($response->body());
+
+            if (! is_array($payload['parameters'])
+                || ! $rawPayload instanceof stdClass
+                || ! property_exists($rawPayload, 'parameters')
+                || ! $rawPayload->parameters instanceof stdClass) {
                 return false;
             }
 
