@@ -1,0 +1,7 @@
+parameters:
+  configDirectories:
+    - %currentWorkingDirectory%/config
+  level: 7
+  paths:
+    - src
+    - config
