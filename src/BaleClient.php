@@ -25,7 +25,7 @@ class BaleClient
 
     private const GUZZLE_MILLISECONDS_PER_SECOND = 1000;
 
-    /** @return array<mixed> */
+    /** @return array<string, mixed> */
     public function getMe(): array
     {
         return $this->requestArray('getMe');
@@ -33,7 +33,7 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function sendMessage(int|string $chatId, string $text, array $options = []): array
     {
@@ -48,7 +48,7 @@ class BaleClient
      *
      * @param  array<string, mixed>  $message
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function replyToMessage(array $message, string $text, array $options = []): array
     {
@@ -75,13 +75,13 @@ class BaleClient
         return $this->requestBoolean('deleteWebhook');
     }
 
-    /** @return array<mixed> */
+    /** @return array<string, mixed> */
     public function getWebhookInfo(): array
     {
         return $this->requestArray('getWebhookInfo');
     }
 
-    /** @return array<mixed> */
+    /** @return array<string, mixed> */
     public function forwardMessage(int|string $chatId, int|string $fromChatId, int $messageId): array
     {
         return $this->requestArray('forwardMessage', [
@@ -91,7 +91,7 @@ class BaleClient
         ]);
     }
 
-    /** @return array<mixed> */
+    /** @return array<string, mixed> */
     public function copyMessage(int|string $chatId, int|string $fromChatId, int $messageId): array
     {
         return $this->requestArray('copyMessage', [
@@ -174,7 +174,7 @@ class BaleClient
      * Make one getUpdates request. Applications are responsible for advancing offsets.
      *
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
+     * @return array<int, array<string, mixed>>
      */
     public function getUpdates(array $options = []): array
     {
@@ -187,7 +187,7 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function sendPhoto(int|string $chatId, int|string $fromChatId, string|SplFileInfo $photo, array $options = []): array
     {
@@ -198,7 +198,7 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function sendAudio(int|string $chatId, string|SplFileInfo $audio, array $options = []): array
     {
@@ -207,7 +207,7 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function sendDocument(int|string $chatId, string|SplFileInfo $document, array $options = []): array
     {
@@ -216,7 +216,7 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function sendVideo(int|string $chatId, string|SplFileInfo $video, array $options = []): array
     {
@@ -225,7 +225,7 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function sendAnimation(int|string $chatId, string|SplFileInfo $animation, array $options = []): array
     {
@@ -234,7 +234,7 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function sendVoice(int|string $chatId, string|SplFileInfo $voice, array $options = []): array
     {
@@ -242,10 +242,10 @@ class BaleClient
     }
 
     /**
-     * @param  array<int, array<string, mixed>>  $media
+     * @param  list<array<string, mixed>>  $media
      * @param  array<string, mixed>  $options
      * @param  array<array-key, SplFileInfo>  $attachments
-     * @return array<mixed>
+     * @return array<int, array<string, mixed>>
      */
     public function sendMediaGroup(int|string $chatId, array $media, array $options = [], array $attachments = []): array
     {
@@ -265,7 +265,7 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function sendLocation(int|string $chatId, float $latitude, float $longitude, array $options = []): array
     {
@@ -278,7 +278,7 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     public function sendContact(int|string $chatId, int|string $phoneNumber, string $firstName, array $options = []): array
     {
@@ -289,7 +289,7 @@ class BaleClient
         ]));
     }
 
-    /** @return array<mixed> */
+    /** @return array<string, mixed> */
     public function getFile(string $fileId): array
     {
         return $this->requestArray('getFile', ['file_id' => $fileId]);
@@ -587,7 +587,7 @@ class BaleClient
     /**
      * @param  array<string, mixed>  $options
      * @param  array<string, int|string>  $required
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     private function sendMedia(string $method, int|string $chatId, string $field, string|SplFileInfo $file, array $options, array $required = []): array
     {
