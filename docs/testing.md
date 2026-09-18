@@ -58,6 +58,32 @@ Bale::assertSent('askReview', ['delay_seconds' => 30]);
 
 `Bale::assertNothingSent()` فقط وقتی fail می‌شود که این پکیج یک درخواست Bot API یا دانلود فایل ارسال کرده باشد.
 
+## همراهی با Laravel `Http::fake()`
+
+fakeهای URL-specific برای HTTP خارجی با `Bale::fake()` تداخلی ندارند و می‌توانند پیش یا پس از آن ثبت شوند، مشروط بر اینکه URLهای Bale را match نکنند:
+
+~~~php
+use Illuminate\Support\Facades\Http;
+
+Http::fake([
+    'https://example.test/*' => Http::response(['ok' => true]),
+]);
+
+Bale::fake();
+~~~
+
+اما اگر از catch-all `Http::fake()` (از جمله فراخوانی بدون آرگومان) یا الگویی مانند `'*'` استفاده می‌کنید، ابتدا `Bale::fake()` را ثبت کنید:
+
+~~~php
+Bale::fake();
+
+Http::fake([
+    '*' => Http::response('external fake'),
+]);
+~~~
+
+Laravel callbackهای fake را به‌ترتیب ثبت بررسی می‌کند؛ بنابراین fake محدود Bale باید نخستین فرصت را برای پاسخ به URLهای Bale داشته باشد. این یک قاعدهٔ ترتیب fake در Laravel است، نه رفتار پروتکل Bale.
+
 ## تست خطاهای low-level
 
 برای آزمایش envelope خطای مشخص، پاسخ malformed یا خطای HTTP، از Laravel `Http::fake()` مستقیم استفاده کنید. این روش برای assertionهای سطح پایین مناسب است؛ برای رفتار معمول integration، `Bale::fake()` خواناتر است.

@@ -123,6 +123,23 @@ it('does not count unrelated Laravel HTTP traffic as Bale traffic', function ():
     Bale::assertNotSent('sendMessage');
 });
 
+it('lets the Bale fake handle Bale traffic before a later catch-all Laravel fake', function (): void {
+    Bale::fake();
+    Http::fake([
+        '*' => Http::response('external'),
+    ]);
+
+    expect(Http::get('https://example.test/health')->body())->toBe('external');
+
+    Bale::assertNothingSent();
+
+    expect(Bale::getMe())->toBeArray();
+
+    Bale::assertSent('getMe');
+    Bale::assertSentTimes('getMe', 1);
+    Bale::assertNotSent('sendMessage');
+});
+
 it('resets Bale fake request history when activated again', function (): void {
     Bale::fake();
     Bale::getMe();

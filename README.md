@@ -126,7 +126,7 @@ Bale::assertSent('sendMessage', [
 ]);
 ~~~
 
-`Bale::fake()` فقط درخواست‌های Bot API و دانلود فایلِ همین پکیج را fake می‌کند؛ HTTP نامرتبط برنامه را جعل یا جزو assertionها حساب نمی‌کند. API تست عبارت است از `Bale::fake()`، `Bale::assertSent()`، `Bale::assertSentTimes()`، `Bale::assertNotSent()` و `Bale::assertNothingSent()`. assertionها endpoint رسمی مانند `sendMessage` را می‌بینند، نه convenience methodهایی مانند `replyToMessage`. برای مثال پیشرفته‌تر و تست رسانه به [راهنمای تست](docs/testing.md) مراجعه کنید.
+`Bale::fake()` فقط درخواست‌های Bot API و دانلود فایلِ همین پکیج را fake می‌کند؛ HTTP نامرتبط برنامه را جعل یا جزو assertionها حساب نمی‌کند. API تست عبارت است از `Bale::fake()`، `Bale::assertSent()`، `Bale::assertSentTimes()`، `Bale::assertNotSent()` و `Bale::assertNothingSent()`. assertionها endpoint رسمی مانند `sendMessage` را می‌بینند، نه convenience methodهایی مانند `replyToMessage`. اگر در همان تست از catch-all `Http::fake()` استفاده می‌کنید، ابتدا `Bale::fake()` را ثبت کنید؛ جزئیات، مثال پیشرفته‌تر و تست رسانه در [راهنمای تست](docs/testing.md) آمده است.
 
 ## چطور به یک پیام بله پاسخ بدهیم؟
 

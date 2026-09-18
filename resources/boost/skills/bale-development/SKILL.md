@@ -45,6 +45,8 @@ Bale::assertNotSent('sendDocument');
 
 `assertSent` and `assertNotSent` also accept a callback receiving Laravel's `Illuminate\Http\Client\Request`, for example to verify multipart upload behavior. Use Laravel `Http::fake()` directly for deliberately malformed or error response envelopes.
 
+When combining `Bale::fake()` with a catch-all Laravel `Http::fake()`, register `Bale::fake()` first. URL-specific external fakes can coexist normally.
+
 ## Laravel Bale convenience methods
 
 `replyToMessage` and `downloadFile` are package conveniences, not Bale Bot API endpoints. Do not describe them as official methods or add aliases for them.
