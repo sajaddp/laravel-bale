@@ -1,28 +1,28 @@
 ---
-title: راهنمای AI Coding برای Laravel Bale
-description: مرجع فنی برای استفادهٔ AI از Laravel Bale، مرز Bale و Telegram و منابع factual پکیج.
+title: راهنمای استفاده از Laravel Bale با ابزارهای هوش مصنوعی
+description: مرجع فنی استفادهٔ ابزارهای هوش مصنوعی از Laravel Bale، مرز Bale و Telegram و منابع دقیق پکیج.
 ---
 
-# AI Coding با Laravel Bale
+# استفاده از Laravel Bale با ابزارهای هوش مصنوعی
 
-این صفحه برای agentها و ابزارهای AI است که روی integration بله کار می‌کنند. Laravel Bale یک integration کم‌حجم Laravel 13 برای Bale Bot API است، نه یک framework ربات و نه یک compatibility layer برای Telegram.
+این صفحه برای عامل‌ها و ابزارهای هوش مصنوعی است که روی اتصال به بله کار می‌کنند. Laravel Bale پکیجی کم‌حجم برای Laravel 13 و Bale Bot API است، نه چارچوب ساخت ربات و نه لایهٔ سازگاری برای Telegram.
 
 ## پیش از تولید کد، منبع درست را انتخاب کنید
 
-- [مرجع API](api-reference.md) فهرست factual API عمومی پکیج و تفکیک wrapper رسمی، convenience و API تست است.
-- [پوشش Bale Bot API](api-coverage.md) پاسخ authoritative به پشتیبانی یا نبود پشتیبانی هر method رسمی Bale است.
-- [راهنمای تست](testing.md) مرجع fake و assertionهای پکیج است.
-- [رفع اشکال](troubleshooting.md) مرزهای failure و assumptionهای خطرناک را ثبت می‌کند.
+- [مرجع API](api-reference.md) فهرست دقیق API عمومی پکیج و تفکیک متدهای رسمی، کمکی و API تست است.
+- [پوشش Bale Bot API](api-coverage.md) پاسخ قطعی به پشتیبانی‌شدن یا نشدن هر متد رسمی Bale است.
+- [راهنمای تست](testing.md) مرجع شبیه‌سازی و بررسی‌های پکیج است.
+- [رفع اشکال](troubleshooting.md) مرزهای خطا و فرض‌های خطرناک را ثبت می‌کند.
 
-Laravel Boost و skill `bale-development` در خود repository، همین boundaryها را برای محیط‌های AI-aware بیان می‌کنند.
+Laravel Boost و مهارت `bale-development` در خود مخزن، همین مرزها را برای محیط‌های هوش مصنوعی بیان می‌کنند.
 
-## قواعد تولید کد
+## قواعد نوشتن کد
 
-1. هیچ method، option یا field مخصوص Telegram را برای Bale اختراع نکنید.
-2. پیش از فرض‌کردن وجود Bale method، [پوشش API](api-coverage.md) را بررسی کنید.
-3. wrapperهای رسمی Bale را فقط همان‌طور که در [مرجع API](api-reference.md) آمده‌اند فراخوانی کنید.
-4. `replyToMessage` و `downloadFile` convenienceهای Laravel Bale هستند، نه endpointهای رسمی Bale.
-5. برای تست رفتار معمول پکیج از `Bale::fake()` استفاده کنید؛ fake مسیر ساخت درخواست و parser واقعی `BaleClient` را حفظ می‌کند.
+1. هیچ متد، گزینه یا فیلد ویژهٔ Telegram را برای Bale نسازید.
+2. پیش از فرض‌کردن وجود متد Bale، [پوشش API](api-coverage.md) را بررسی کنید.
+3. متدهای رسمی Bale را فقط همان‌گونه که در [مرجع API](api-reference.md) آمده‌اند فراخوانی کنید.
+4. `replyToMessage` و `downloadFile` متدهای کمکی Laravel Bale هستند، نه متدهای رسمی API Bale.
+5. برای تست رفتار معمول پکیج از `Bale::fake()` استفاده کنید؛ شبیه‌سازی، مسیر ساخت درخواست و تجزیه‌کنندهٔ واقعی `BaleClient` را حفظ می‌کند.
 
 ~~~php
 use Sajaddp\Bale\Facades\Bale;
@@ -34,8 +34,8 @@ Bale::sendMessage(chatId: 123456789, text: 'سلام');
 Bale::assertSent('sendMessage', ['chat_id' => 123456789]);
 ~~~
 
-## مسئولیت‌های application را به پکیج نسبت ندهید
+## مسئولیت‌های برنامه را به پکیج نسبت ندهید
 
-Route دریافت Webhook، controller، polling loop، offset persistence، queue، keyboard builder، callback router و سیاست ذخیره‌سازی فایل در application Laravel قرار دارند. [Webhook](webhooks.md)، [Polling](polling.md) و [فایل و رسانه](files-media.md) این مرز را با مثال‌های محدود و واقعی نشان می‌دهند.
+مسیر دریافت وب‌هوک، کنترل‌کننده، حلقهٔ دریافت دوره‌ای، ذخیرهٔ `offset`، صف، سازندهٔ دکمه، مسیردهی Callback و سیاست ذخیره‌سازی فایل در برنامهٔ Laravel قرار دارند. [وب‌هوک](webhooks.md)، [دریافت دوره‌ای](polling.md) و [فایل و رسانه](files-media.md) این مرز را با مثال‌های محدود و واقعی نشان می‌دهند.
 
-هنگام تردید، از README snippet نتیجه‌گیری نکنید؛ صفحهٔ کوچک و factual متناسب با task را بخوانید.
+هنگام تردید، از یک قطعهٔ README نتیجه‌گیری نکنید؛ صفحهٔ کوتاه و دقیقِ مربوط به کار خود را بخوانید.

@@ -1,11 +1,11 @@
 ---
 title: فایل و رسانه بله در Laravel
-description: راهنمای file_id، URL، multipart، آپلود SplFileInfo و دانلود فایل بله با Laravel Bale.
+description: راهنمای file_id، URL، multipart، آپلود با SplFileInfo و دانلود فایل بله با Laravel Bale.
 ---
 
 # چطور فایل را به بله آپلود کنیم؟
 
-برای `sendPhoto`، `sendAudio`، `sendDocument`، `sendVideo`، `sendVoice` و `sendAnimation`، مقدار `string` فقط یک `file_id` بله یا HTTP URL است. مسیر محلی به شکل string خودکار upload نمی‌شود.
+برای `sendPhoto`، `sendAudio`، `sendDocument`، `sendVideo`، `sendVoice` و `sendAnimation`، مقدار رشته‌ای فقط یک `file_id` بله یا HTTP URL است. مسیر محلی به‌شکل رشته‌ای خودکار آپلود نمی‌شود.
 
 ~~~php
 use Sajaddp\Bale\Facades\Bale;
@@ -38,9 +38,9 @@ Bale::sendPhoto(
 );
 ~~~
 
-## ارسال media group
+## ارسال گروه رسانه
 
-برای album از شکل raw array مستند Bale استفاده کنید. هر attachment محلی نام صریح و reference متناظر `attach://name` دارد.
+برای آلبوم از آرایهٔ خام مستند Bale استفاده کنید. هر فایل پیوست محلی باید نامی روشن و ارجاع متناظر `attach://name` داشته باشد.
 
 ~~~php
 Bale::sendMediaGroup(
@@ -58,7 +58,7 @@ Bale::sendMediaGroup(
 
 ## چطور فایل دریافتی بله را دانلود کنیم؟
 
-`getFile($fileId)` wrapper رسمی برای metadata فایل است. `downloadFile($fileId)` convenience Laravel Bale است: نخست `getFile` را اجرا می‌کند، `file_path` غیرخالی را می‌خواهد و binary body را برمی‌گرداند. هیچ‌یک URL دانلود حاوی توکن را public نمی‌کنند.
+`getFile($fileId)` متد رسمی برای اطلاعات فایل است. `downloadFile($fileId)` متد کمکی Laravel Bale است: ابتدا `getFile` را اجرا می‌کند، وجود `file_path` غیرخالی را می‌خواهد و محتوای دودویی را برمی‌گرداند. هیچ‌کدام URL دانلودِ حاوی توکن را عمومی نمی‌کنند.
 
 ~~~php
 use Illuminate\Support\Facades\Storage;
@@ -69,4 +69,4 @@ Storage::put(
 );
 ~~~
 
-Laravel Bale به Filesystem وابسته نیست؛ ذخیره‌سازی، نام فایل، MIME validation و access policy با application است. برای تست multipart و دانلود بدون شبکه، [راهنمای تست](testing.md) را ببینید.
+Laravel Bale به Filesystem وابسته نیست؛ ذخیره‌سازی، نام فایل، بررسی MIME و سیاست دسترسی با برنامه است. برای تست `multipart` و دانلود بدون شبکه، [راهنمای تست](testing.md) را ببینید.

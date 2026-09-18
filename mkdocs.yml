@@ -1,6 +1,6 @@
-site_name: "Laravel Bale — مستندات Laravel برای Bale Bot API"
+site_name: "Laravel Bale — مستندات لاراول برای Bale Bot API"
 site_url: "https://sajaddehshiri.ir/laravel-bale/"
-site_description: "مستندات فارسی Laravel Bale برای Bale Bot API در Laravel 13 و PHP 8.3+"
+site_description: "مستندات فارسی Laravel Bale برای کار با Bale Bot API در Laravel 13 و PHP 8.3+"
 site_author: "Sajad Dehshiri"
 repo_url: "https://github.com/sajaddp/laravel-bale"
 repo_name: "sajaddp/laravel-bale"
@@ -53,16 +53,16 @@ nav:
       - شروع سریع: getting-started.md
       - پیام‌ها: messages.md
   - راهنماها:
-      - Webhook: webhooks.md
-      - Polling: polling.md
+      - وب‌هوک: webhooks.md
+      - دریافت دوره‌ای: polling.md
       - فایل و رسانه: files-media.md
-      - Callback و Keyboard: callbacks-keyboards.md
+      - Callback و دکمه‌ها: callbacks-keyboards.md
       - تست: testing.md
       - دستورپخت‌ها: recipes.md
   - مرجع:
-      - API Reference: api-reference.md
-      - Bale API Coverage: api-coverage.md
+      - مرجع API: api-reference.md
+      - پوشش API بله: api-coverage.md
       - رفع اشکال: troubleshooting.md
-  - AI Coding: ai-coding.md
+  - راهنمای هوش مصنوعی: ai-coding.md
   - پروژه:
-      - GitHub Repository: https://github.com/sajaddp/laravel-bale
+      - مخزن GitHub: https://github.com/sajaddp/laravel-bale

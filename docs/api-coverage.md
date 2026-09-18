@@ -1,82 +1,82 @@
 ---
 title: پوشش Bale Bot API در Laravel Bale
-description: فهرست authoritative متدهای رسمی Bale Bot API که Laravel Bale پشتیبانی می‌کند یا نمی‌کند.
+description: فهرست قطعی متدهای رسمی Bale Bot API که Laravel Bale پشتیبانی می‌کند یا نمی‌کند.
 ---
 
 # پوشش Bale Bot API
 
-این inventory تمام methodهای Bot API حاضر در HTML رسمی Bale است؛ typeها، MiniApp و JavaScript APIها در این جدول نیستند. «Supported» یعنی wrapper مستقیم public در Laravel Bale وجود دارد. تاریخ roadmap یا سازگاری استنباطی وجود ندارد.
+این فهرست همهٔ متدهای Bot API موجود در HTML رسمی Bale را در بر می‌گیرد؛ نوع‌ها، MiniApp و APIهای JavaScript در این جدول نیستند. «پشتیبانی‌شده» یعنی متدی عمومی و مستقیم در Laravel Bale وجود دارد. هیچ زمان‌بندی انتشار یا سازگاری استنباطی مطرح نیست.
 
-## Core, updates, and webhook
+## بخش پایه، Updateها و وب‌هوک
 
-| Bale method | Status | Package method / note |
+| متد Bale | وضعیت | متد پکیج / توضیح |
 | --- | --- | --- |
-| `getMe` | Supported | `getMe` |
-| `getUpdates` | Supported | `getUpdates` |
-| `setWebhook` | Supported | `setWebhook` |
-| `deleteWebhook` | Supported | `deleteWebhook` |
-| `getWebhookInfo` | Supported | `getWebhookInfo` |
+| `getMe` | پشتیبانی‌شده | `getMe` |
+| `getUpdates` | پشتیبانی‌شده | `getUpdates` |
+| `setWebhook` | پشتیبانی‌شده | `setWebhook` |
+| `deleteWebhook` | پشتیبانی‌شده | `deleteWebhook` |
+| `getWebhookInfo` | پشتیبانی‌شده | `getWebhookInfo` |
 
-## Messaging, media, callback, and review
+## پیام، رسانه، Callback و نظر
 
-| Bale method | Status | Package method / note |
+| متد Bale | وضعیت | متد پکیج / توضیح |
 | --- | --- | --- |
-| `sendMessage` | Supported | `sendMessage` |
-| `forwardMessage` | Supported | `forwardMessage` |
-| `copyMessage` | Supported | `copyMessage` |
-| `sendPhoto` | Supported | `sendPhoto` |
-| `sendAudio` | Supported | `sendAudio` |
-| `sendDocument` | Supported | `sendDocument` |
-| `sendVideo` | Supported | `sendVideo` |
-| `sendAnimation` | Supported | `sendAnimation` |
-| `sendVoice` | Supported | `sendVoice` |
-| `sendMediaGroup` | Supported | `sendMediaGroup` |
-| `sendLocation` | Supported | `sendLocation` |
-| `sendContact` | Supported | `sendContact` |
-| `sendChatAction` | Supported | `sendChatAction` |
-| `getFile` | Supported | `getFile` |
-| `answerCallbackQuery` | Supported | `answerCallbackQuery` |
-| `askReview` | Supported | `askReview` |
-| `editMessageText` | Supported | `editMessageText` |
-| `editMessageCaption` | Supported | `editMessageCaption` |
-| `editMessageReplyMarkup` | Supported | `editMessageReplyMarkup` |
-| `deleteMessage` | Supported | `deleteMessage` |
+| `sendMessage` | پشتیبانی‌شده | `sendMessage` |
+| `forwardMessage` | پشتیبانی‌شده | `forwardMessage` |
+| `copyMessage` | پشتیبانی‌شده | `copyMessage` |
+| `sendPhoto` | پشتیبانی‌شده | `sendPhoto` |
+| `sendAudio` | پشتیبانی‌شده | `sendAudio` |
+| `sendDocument` | پشتیبانی‌شده | `sendDocument` |
+| `sendVideo` | پشتیبانی‌شده | `sendVideo` |
+| `sendAnimation` | پشتیبانی‌شده | `sendAnimation` |
+| `sendVoice` | پشتیبانی‌شده | `sendVoice` |
+| `sendMediaGroup` | پشتیبانی‌شده | `sendMediaGroup` |
+| `sendLocation` | پشتیبانی‌شده | `sendLocation` |
+| `sendContact` | پشتیبانی‌شده | `sendContact` |
+| `sendChatAction` | پشتیبانی‌شده | `sendChatAction` |
+| `getFile` | پشتیبانی‌شده | `getFile` |
+| `answerCallbackQuery` | پشتیبانی‌شده | `answerCallbackQuery` |
+| `askReview` | پشتیبانی‌شده | `askReview` |
+| `editMessageText` | پشتیبانی‌شده | `editMessageText` |
+| `editMessageCaption` | پشتیبانی‌شده | `editMessageCaption` |
+| `editMessageReplyMarkup` | پشتیبانی‌شده | `editMessageReplyMarkup` |
+| `deleteMessage` | پشتیبانی‌شده | `deleteMessage` |
 
-`replyToMessage` و `downloadFile` در این جدول نیستند، چون convenienceهای Laravel Bale هستند، نه Bale methods.
+`replyToMessage` و `downloadFile` در این جدول نیستند، چون متدهای کمکی Laravel Bale هستند، نه متدهای Bale.
 
-## Chat administration
+## مدیریت گفتگو
 
-| Bale method | Status | Note |
+| متد Bale | وضعیت | توضیح |
 | --- | --- | --- |
-| `banChatMember` | Unsupported | Not currently implemented |
-| `unbanChatMember` | Unsupported | Not currently implemented |
-| `promoteChatMember` | Unsupported | Not currently implemented |
-| `setChatPhoto` | Unsupported | Not currently implemented |
-| `leaveChat` | Unsupported | Not currently implemented |
-| `getChat` | Unsupported | Not currently implemented |
-| `getChatAdministrators` | Unsupported | Not currently implemented |
-| `getChatMembersCount` | Unsupported | Not currently implemented |
-| `getChatMember` | Unsupported | Not currently implemented |
-| `pinChatMessage` | Unsupported | Not currently implemented |
-| `unPinChatMessage` | Unsupported | Not currently implemented |
-| `unpinAllChatMessages` | Unsupported | Not currently implemented |
-| `setChatTitle` | Unsupported | Not currently implemented |
-| `setChatDescription` | Unsupported | Not currently implemented |
-| `deleteChatPhoto` | Unsupported | Not currently implemented |
-| `createChatInviteLink` | Unsupported | Not currently implemented |
-| `revokeChatInviteLink` | Unsupported | Not currently implemented |
-| `exportChatInviteLink` | Unsupported | Not currently implemented |
+| `banChatMember` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `unbanChatMember` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `promoteChatMember` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `setChatPhoto` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `leaveChat` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `getChat` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `getChatAdministrators` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `getChatMembersCount` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `getChatMember` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `pinChatMessage` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `unPinChatMessage` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `unpinAllChatMessages` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `setChatTitle` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `setChatDescription` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `deleteChatPhoto` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `createChatInviteLink` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `revokeChatInviteLink` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `exportChatInviteLink` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
 
-## Stickers and payments
+## استیکرها و پرداخت‌ها
 
-| Bale method | Status | Note |
+| متد Bale | وضعیت | توضیح |
 | --- | --- | --- |
-| `uploadStickerFile` | Unsupported | Not currently implemented |
-| `createNewStickerSet` | Unsupported | Not currently implemented |
-| `addStickerToSet` | Unsupported | Not currently implemented |
-| `sendInvoice` | Unsupported | Not currently implemented |
-| `createInvoiceLink` | Unsupported | Not currently implemented |
-| `answerPreCheckoutQuery` | Unsupported | Not currently implemented |
-| `inquireTransaction` | Unsupported | Not currently implemented |
+| `uploadStickerFile` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `createNewStickerSet` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `addStickerToSet` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `sendInvoice` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `createInvoiceLink` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `answerPreCheckoutQuery` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
+| `inquireTransaction` | پشتیبانی‌نشده | در حال حاضر پیاده‌سازی نشده است |
 
-Summary: **25 supported** and **25 unsupported** official Bale methods.
+جمع‌بندی: **۲۵ متد رسمی پشتیبانی‌شده** و **۲۵ متد رسمی پشتیبانی‌نشده** در Bale.

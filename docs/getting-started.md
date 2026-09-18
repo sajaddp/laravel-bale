@@ -23,7 +23,7 @@ BALE_BOT_TOKEN=your-bot-token
 php artisan vendor:publish --tag=bale-config
 ~~~
 
-سپس Facade را import کنید:
+سپس کلاس Facade را وارد کنید:
 
 ~~~php
 use Sajaddp\Bale\Facades\Bale;
@@ -40,11 +40,11 @@ Bale::replyToMessage(
 );
 ~~~
 
-`replyToMessage` یک convenience method است. raw Message باید `message_id` و `chat.id` از نوع integer داشته باشد؛ در غیر این صورت پیش از ارسال HTTP، `InvalidArgumentException` رخ می‌دهد.
+`replyToMessage` متد کمکی پکیج است. دادهٔ خام Message باید `message_id` و `chat.id` را به‌صورت عدد صحیح داشته باشد؛ در غیر این صورت پیش از ارسال درخواست HTTP، `InvalidArgumentException` رخ می‌دهد.
 
 ## خطاهای پایه
 
-پاسخ معتبر Bale با `ok: false` به `Sajaddp\Bale\Exceptions\BaleRequestException` تبدیل می‌شود. پاسخ HTTP ناموفق یا envelope نامعتبر، semantics خود Laravel HTTP Client را حفظ می‌کند و می‌تواند `Illuminate\Http\Client\RequestException` یا `UnexpectedValueException` بدهد.
+پاسخ معتبر Bale با `ok: false` به `Sajaddp\Bale\Exceptions\BaleRequestException` تبدیل می‌شود. پاسخ HTTP ناموفق یا ساختار پاسخ نامعتبر، رفتار معمول Laravel HTTP Client را حفظ می‌کند و ممکن است `Illuminate\Http\Client\RequestException` یا `UnexpectedValueException` بدهد.
 
 ~~~php
 use Sajaddp\Bale\Exceptions\BaleRequestException;

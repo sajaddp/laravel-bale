@@ -1,11 +1,11 @@
 ---
-title: Polling بله با Laravel Bale
-description: راهنمای getUpdates بله در Laravel، offset، limit، timeout و مسئولیت loop و persistence برنامه.
+title: دریافت دوره‌ای بله با Laravel Bale
+description: راهنمای دریافت Updateهای بله با getUpdates در Laravel، همراه با offset، limit، timeout و مسئولیت برنامه برای ذخیرهٔ وضعیت.
 ---
 
-# چطور Updateهای بله را با Polling دریافت کنیم؟
+# چطور Updateهای بله را به‌صورت دوره‌ای دریافت کنیم؟
 
-`getUpdates` دقیقاً یک درخواست به Bale می‌سازد و array نتیجه را برمی‌گرداند. پکیج daemon، loop بی‌نهایت، queue، handler یا persistence برای offset ندارد.
+`getUpdates` دقیقاً یک درخواست به Bale می‌فرستد و آرایهٔ نتیجه را برمی‌گرداند. پکیج پردازشگر دائمی، حلقهٔ بی‌پایان، صف، پردازش‌کننده یا ذخیره‌سازی برای `offset` ندارد.
 
 ~~~php
 use Sajaddp\Bale\Facades\Bale;
@@ -17,24 +17,24 @@ $updates = Bale::getUpdates([
 ]);
 ~~~
 
-## offset را در application نگه دارید
+## offset را در برنامه نگه دارید
 
-پس از پردازش موفق هر Update، برنامهٔ شما باید مقدار offset بعدی را در storage مناسب خود نگه دارد. این تصمیم به مدل پردازش، تحمل خطا و زیرساخت application بستگی دارد؛ Laravel Bale state پنهان ایجاد نمی‌کند.
+پس از پردازش موفق هر Update، برنامهٔ شما باید مقدار `offset` بعدی را در محل ذخیره‌سازی مناسب نگه دارد. این تصمیم به شیوهٔ پردازش، تحمل خطا و زیرساخت برنامه بستگی دارد؛ Laravel Bale هیچ وضعیت پنهانی نگه نمی‌دارد.
 
 ~~~php
 foreach ($updates as $update) {
-    // پردازش idempotent برنامهٔ خودتان
+    // پردازشی که تکرار آن بی‌خطر باشد در برنامهٔ خودتان
 
     $nextOffset = $update['update_id'] + 1;
 }
 
-// $nextOffset را فقط پس از سیاست پردازش خودتان persist کنید.
+// $nextOffset را فقط پس از رعایت سیاست پردازش برنامهٔ خودتان ذخیره کنید.
 ~~~
 
-## timeout و headroom HTTP
+## timeout و مهلت اضافی HTTP
 
-گزینهٔ `timeout` برای long polling به Bale می‌رود. Laravel Bale برای timeout HTTP headroom مناسب اضافه می‌کند تا درخواست HTTP پیش از timeout مورد انتظار Bale قطع نشود؛ این به‌معنای مدیریت loop یا retry توسط پکیج نیست.
+گزینهٔ `timeout` برای دریافت طولانی‌مدت به Bale می‌رود. Laravel Bale برای زمان‌انتظار HTTP مهلت اضافی مناسبی می‌افزاید تا درخواست HTTP پیش از زمان مورد انتظار Bale قطع نشود؛ این به‌معنای مدیریت حلقه یا تلاش مجدد توسط پکیج نیست.
 
-برنامهٔ شما باید چرخهٔ فراخوانی، زمان‌بندی، backoff، logging و نحوهٔ توقف worker را مالک باشد. اگر نمی‌خواهید چنین lifecycleای را نگه دارید، [Webhook در Laravel 13](webhooks.md) مسیر push-based را توضیح می‌دهد.
+برنامهٔ شما باید چرخهٔ فراخوانی، زمان‌بندی، فاصلهٔ افزایشی تلاش مجدد، ثبت گزارش و نحوهٔ توقف پردازشگر را مدیریت کند. اگر نمی‌خواهید چنین چرخه‌ای را نگه دارید، [وب‌هوک در Laravel 13](webhooks.md) دریافت رویداد از سمت Bale را توضیح می‌دهد.
 
-برای بررسی وجود wrapperهای Bale، نه ساخت method فرضی، همیشه [پوشش Bale Bot API](api-coverage.md) را بررسی کنید.
+برای بررسی وجود متدهای Bale، به‌جای ساختن متد فرضی، همیشه [پوشش Bale Bot API](api-coverage.md) را بررسی کنید.

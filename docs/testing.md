@@ -1,11 +1,11 @@
 ---
-title: تست Laravel Bale با Bale fake
-description: راهنمای تست integration بله با Bale::fake و assertionهای Laravel-native بدون درخواست واقعی.
+title: تست Laravel Bale با Bale::fake()
+description: راهنمای تست اتصال به بله با Bale::fake() و بررسی‌های مبتنی بر Laravel، بدون درخواست واقعی.
 ---
 
-# تست Bale integration
+# تست اتصال به Bale
 
-`Bale::fake()` مسیر واقعی `BaleClient` را حفظ می‌کند: public methodها payload می‌سازند، HTTP Client Laravel درخواست را record می‌کند و parser پکیج envelope Bale را پردازش می‌کند. فقط درخواست‌های Bot API و دانلود فایل همین پکیج fake می‌شوند؛ HTTP نامرتبط برنامه نه fake است و نه در Bale assertionها شمرده می‌شود.
+`Bale::fake()` مسیر واقعی `BaleClient` را حفظ می‌کند: متدهای عمومی دادهٔ ارسالی را می‌سازند، Laravel HTTP Client درخواست را ثبت می‌کند و تجزیه‌کنندهٔ پکیج ساختار پاسخ Bale را پردازش می‌کند. فقط درخواست‌های Bot API و دانلود فایل همین پکیج شبیه‌سازی می‌شوند؛ درخواست‌های HTTP نامرتبط برنامه نه شبیه‌سازی می‌شوند و نه در بررسی‌های Bale شمرده می‌شوند.
 
 ## شروع ساده
 
@@ -24,11 +24,11 @@ Bale::assertSentTimes('sendMessage', 1);
 Bale::assertNotSent('sendDocument');
 ~~~
 
-Array شرط subset strict است: همهٔ کلیدها و مقادیر supplied باید وجود داشته باشند، اما payload واقعی می‌تواند کلیدهای اضافی داشته باشد.
+اگر برای بررسی آرایه بدهید، همهٔ کلیدها و مقدارهای آن باید در دادهٔ ارسالی یکسان باشند؛ وجود کلیدهای اضافه در درخواست واقعی مشکلی ایجاد نمی‌کند.
 
-## assertion پیشرفته برای media
+## بررسی پیشرفتهٔ رسانه
 
-در صورت نیاز callback مستقیماً `Illuminate\Http\Client\Request` را می‌گیرد:
+در صورت نیاز، تابع بررسی مستقیماً `Illuminate\Http\Client\Request` را می‌گیرد:
 
 ~~~php
 Bale::fake();
@@ -44,9 +44,9 @@ Bale::assertSent(
 );
 ~~~
 
-## Convenience، فایل و askReview
+## متدهای کمکی، فایل و askReview
 
-assertionها endpoint رسمی را مشاهده می‌کنند، نه نام convenience method:
+بررسی‌ها متد رسمی API را می‌بینند، نه نام متد کمکی:
 
 ~~~php
 Bale::fake();
@@ -61,11 +61,11 @@ Bale::askReview(userId: 123456789, delaySeconds: 30);
 Bale::assertSent('askReview', ['delay_seconds' => 30]);
 ~~~
 
-`Bale::assertNothingSent()` فقط وقتی fail می‌شود که این پکیج یک درخواست Bot API یا دانلود فایل ارسال کرده باشد.
+`Bale::assertNothingSent()` فقط وقتی خطا می‌دهد که این پکیج درخواست Bot API یا دانلود فایل فرستاده باشد.
 
 ## همراهی با Laravel `Http::fake()`
 
-fakeهای URL-specific برای HTTP خارجی با `Bale::fake()` تداخلی ندارند و می‌توانند پیش یا پس از آن ثبت شوند، مشروط بر اینکه URLهای Bale را match نکنند:
+شبیه‌سازی‌های نشانی‌محور برای HTTP خارجی با `Bale::fake()` تداخلی ندارند و می‌توانند پیش یا پس از آن ثبت شوند، به‌شرطی که با URLهای Bale منطبق نباشند:
 
 ~~~php
 use Illuminate\Support\Facades\Http;
@@ -77,7 +77,7 @@ Http::fake([
 Bale::fake();
 ~~~
 
-اما اگر از catch-all `Http::fake()` (از جمله فراخوانی بدون آرگومان) یا الگویی مانند `'*'` استفاده می‌کنید، ابتدا `Bale::fake()` را ثبت کنید:
+اما اگر از `Http::fake()` فراگیر، از جمله فراخوانی بدون آرگومان یا الگویی مانند `'*'`، استفاده می‌کنید، ابتدا `Bale::fake()` را ثبت کنید:
 
 ~~~php
 Bale::fake();
@@ -87,11 +87,11 @@ Http::fake([
 ]);
 ~~~
 
-Laravel callbackهای fake را به‌ترتیب ثبت بررسی می‌کند؛ بنابراین fake محدود Bale باید نخستین فرصت را برای پاسخ به URLهای Bale داشته باشد. این یک قاعدهٔ ترتیب fake در Laravel است، نه رفتار پروتکل Bale.
+Laravel تابع‌های شبیه‌سازی را به‌ترتیب ثبت بررسی می‌کند؛ بنابراین شبیه‌سازی محدود Bale باید نخستین فرصت را برای پاسخ به URLهای Bale داشته باشد. این قاعدهٔ ترتیب شبیه‌سازی در Laravel است، نه رفتار پروتکل Bale.
 
-## تست خطاهای low-level
+## تست خطاهای سطح پایین
 
-برای آزمایش envelope خطای مشخص، پاسخ malformed یا خطای HTTP، از Laravel `Http::fake()` مستقیم استفاده کنید. این روش برای assertionهای سطح پایین مناسب است؛ برای رفتار معمول integration، `Bale::fake()` خواناتر است.
+برای آزمایش ساختار خطای مشخص، پاسخ بدساخت یا خطای HTTP، مستقیماً از Laravel `Http::fake()` استفاده کنید. این روش برای بررسی‌های سطح پایین مناسب است؛ برای رفتار معمول اتصال، `Bale::fake()` خواناتر است.
 
 ~~~php
 use Illuminate\Support\Facades\Http;

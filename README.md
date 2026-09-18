@@ -2,13 +2,13 @@
 
 [![Tests](https://github.com/sajaddp/laravel-bale/actions/workflows/tests.yml/badge.svg)](https://github.com/sajaddp/laravel-bale/actions/workflows/tests.yml)
 
-A minimal Laravel 13 integration for the Bale Bot API.
+پکیجی کم‌حجم برای کار با Bale Bot API در Laravel 13.
 
-`sajaddp/laravel-bale` یک کلاینت کم‌حجم برای فراخوانی Bale Bot API در Laravel 13 است. این پکیج PHP 8.3+ را پشتیبانی می‌کند، پاسخ‌های مستند بله را به آرایه یا مقدار نتیجه تبدیل می‌کند و عمداً یک bot framework نیست.
+`sajaddp/laravel-bale` پکیجی کم‌حجم برای کار با Bale Bot API در Laravel 13 است. این پکیج PHP 8.3+ را پشتیبانی می‌کند، پاسخ‌های مستند بله را به آرایه یا مقدار نتیجه تبدیل می‌کند و عمداً چارچوب ساخت ربات نیست.
 
 ## چرا Laravel Bale؟
 
-برای کارهای رایج مانند ارسال پیام، رسانه، Webhook، Polling، Callback Query و فایل، از Facade و Laravel HTTP Client استفاده می‌کنید؛ بدون route، worker، DTO یا state machine پنهان. رفتار Bale همیشه از مستندات رسمی بله می‌آید، نه از فرض سازگاری با Telegram.
+برای کارهای رایج مانند ارسال پیام، رسانه، وب‌هوک، دریافت دوره‌ای، Callback Query و فایل، از Facade و Laravel HTTP Client استفاده می‌کنید؛ بدون مسیر، پردازشگر، DTO یا وضعیت پنهان. رفتار Bale همیشه از مستندات رسمی بله می‌آید، نه از فرض سازگاری با Telegram.
 
 ## نیازمندی‌ها
 
@@ -23,7 +23,7 @@ A minimal Laravel 13 integration for the Bale Bot API.
 composer require sajaddp/laravel-bale
 ~~~
 
-پس از نصب، Laravel provider را خودکار کشف می‌کند. توکن بازو را در محیط برنامه قرار دهید:
+پس از نصب، Laravel ارائه‌دهندهٔ پکیج را خودکار پیدا می‌کند. توکن بازو را در محیط برنامه قرار دهید:
 
 ~~~dotenv
 BALE_BOT_TOKEN=your-bot-token
@@ -35,7 +35,7 @@ BALE_BOT_TOKEN=your-bot-token
 php artisan vendor:publish --tag=bale-config
 ~~~
 
-Facade را صریحاً import کنید:
+کلاس Facade را صریحاً وارد کنید:
 
 ~~~php
 use Sajaddp\Bale\Facades\Bale;
@@ -48,16 +48,16 @@ README برای شروع سریع است. مستندات ساخت‌یافتهٔ
 - [مستندات آنلاین](https://sajaddehshiri.ir/laravel-bale/)
 - [شروع کار](docs/getting-started.md)
 - [پیام‌ها](docs/messages.md)
-- [Webhook](docs/webhooks.md)
-- [Polling](docs/polling.md)
+- [وب‌هوک](docs/webhooks.md)
+- [دریافت دوره‌ای](docs/polling.md)
 - [فایل و رسانه](docs/files-media.md)
-- [Callback و Keyboard](docs/callbacks-keyboards.md)
+- [Callback و دکمه‌ها](docs/callbacks-keyboards.md)
 - [مرجع API](docs/api-reference.md)
 - [پوشش Bale Bot API](docs/api-coverage.md)
 - [تست](docs/testing.md)
 - [دستورپخت‌ها](docs/recipes.md)
 - [رفع اشکال](docs/troubleshooting.md)
-- [AI Coding](docs/ai-coding.md)
+- [راهنمای هوش مصنوعی](docs/ai-coding.md)
 
 ## شروع سریع: چطور با Laravel به بله پیام بفرستیم؟
 
@@ -72,42 +72,42 @@ $message = Bale::sendMessage(
 );
 ~~~
 
-آرگومان‌های الزامی هر متد بر کلید همنام در `options` مقدم‌اند. برای `options` فقط فیلدهایی را بفرستید که Bale برای همان endpoint مستند کرده است.
+آرگومان‌های الزامی هر متد بر کلید همنام در `options` مقدم‌اند. برای `options` فقط فیلدهایی را بفرستید که Bale برای همان متد API مستند کرده است.
 
 ## متدهای رسمی Bale Bot API که پشتیبانی می‌شوند
 
-این جدول از public API فعلی `BaleClient` ساخته شده است. همهٔ موارد این بخش wrapper مستقیم یک روش رسمی Bale Bot API هستند، نه یک endpoint خیالی.
+این جدول از API عمومی فعلی `BaleClient` ساخته شده است. همهٔ موارد این بخش متدهای مستقیمِ رسمی Bale Bot API هستند، نه متدی خیالی.
 
-| گروه | Package method | کاربرد | خروجی |
+| گروه | متد پکیج | کاربرد | خروجی |
 | --- | --- | --- | --- |
-| Bot | `getMe` | اطلاعات بازو | `array` |
-| Messaging | `sendMessage` | ارسال متن | `array` |
-| Messaging | `forwardMessage` / `copyMessage` | فوروارد یا کپی پیام | `array` |
-| Messaging | `sendChatAction` | نمایش action در گفتگو | `bool` |
-| Webhook | `setWebhook` / `deleteWebhook` | ثبت یا حذف Webhook خروجی | `bool` |
-| Webhook | `getWebhookInfo` | اطلاعات Webhook | `array` |
-| Updates | `getUpdates` | دریافت یک‌بارهٔ Updateها | `array` |
-| Callbacks | `answerCallbackQuery` | پاسخ به Callback Query | `bool` |
-| Review | `askReview` | درخواست ثبت یا ویرایش نظر دربارهٔ بازو | `bool` |
-| Message operations | `editMessageText` / `editMessageCaption` / `editMessageReplyMarkup` | ویرایش پیام یا Inline Keyboard | نتیجهٔ خام Bale |
-| Message operations | `deleteMessage` | حذف پیام | `bool` |
-| Media / files | `sendPhoto` / `sendAudio` / `sendDocument` / `sendVideo` / `sendAnimation` / `sendVoice` | ارسال یک رسانه | `array` |
-| Media / files | `sendMediaGroup` | ارسال گروه رسانه | `array` |
-| Media / files | `getFile` | دریافت metadata فایل | `array` |
-| Location / contact | `sendLocation` / `sendContact` | ارسال موقعیت یا مخاطب | `array` |
+| بازو | `getMe` | اطلاعات بازو | `array` |
+| پیام‌ها | `sendMessage` | ارسال متن | `array` |
+| پیام‌ها | `forwardMessage` / `copyMessage` | فوروارد یا کپی پیام | `array` |
+| پیام‌ها | `sendChatAction` | نمایش وضعیت در گفتگو | `bool` |
+| وب‌هوک | `setWebhook` / `deleteWebhook` | ثبت یا حذف وب‌هوک خروجی | `bool` |
+| وب‌هوک | `getWebhookInfo` | اطلاعات وب‌هوک | `array` |
+| Updateها | `getUpdates` | دریافت یک‌بارهٔ Updateها | `array` |
+| Callback | `answerCallbackQuery` | پاسخ به Callback Query | `bool` |
+| نظر | `askReview` | درخواست ثبت یا ویرایش نظر دربارهٔ بازو | `bool` |
+| کار با پیام | `editMessageText` / `editMessageCaption` / `editMessageReplyMarkup` | ویرایش پیام یا دکمه‌های درون‌خطی | نتیجهٔ خام Bale |
+| کار با پیام | `deleteMessage` | حذف پیام | `bool` |
+| رسانه و فایل | `sendPhoto` / `sendAudio` / `sendDocument` / `sendVideo` / `sendAnimation` / `sendVoice` | ارسال یک رسانه | `array` |
+| رسانه و فایل | `sendMediaGroup` | ارسال گروه رسانه | `array` |
+| رسانه و فایل | `getFile` | دریافت اطلاعات فایل | `array` |
+| موقعیت و مخاطب | `sendLocation` / `sendContact` | ارسال موقعیت یا مخاطب | `array` |
 
 ## امکانات اضافهٔ Laravel Bale
 
-دو متد زیر endpoint مستقیم Bale نیستند. آن‌ها فقط workflowهای تکراری را با APIهای رسمی بالا compose می‌کنند؛ برای AI coding agent نیز این تمایز مهم است.
+دو متد زیر مستقیماً متد API Bale نیستند. آن‌ها فقط روندهای تکراری را با APIهای رسمی بالا ساده می‌کنند؛ این تمایز برای ابزارهای هوش مصنوعی هم مهم است.
 
-| Laravel Bale convenience method | بر پایهٔ API رسمی | خروجی |
+| متد کمکی Laravel Bale | بر پایهٔ API رسمی | خروجی |
 | --- | --- | --- |
 | `replyToMessage` | `sendMessage` و `reply_to_message_id` | `array` |
-| `downloadFile` | `getFile` و دانلود فایل مستندشدهٔ Bale | `string` binary |
+| `downloadFile` | `getFile` و دانلود فایل مستندشدهٔ Bale | محتوای دودویی `string` |
 
 ## درخواست نظر با `askReview`
 
-`askReview` یک wrapper رسمی Bale Bot API است، نه helper پکیج. طبق مستندات رسمی، برای نمایش فرم ثبت یا ویرایش نظر دربارهٔ بازو به کار می‌رود؛ نمایش نهایی آن به پشتیبانی نسخهٔ Bale client و شرایط کاربر بستگی دارد.
+`askReview` متد رسمی Bale Bot API است، نه متد کمکی پکیج. طبق مستندات رسمی، برای نمایش فرم ثبت یا ویرایش نظر دربارهٔ بازو به کار می‌رود؛ نمایش نهایی آن به پشتیبانی نسخهٔ Bale و شرایط کاربر بستگی دارد.
 
 ~~~php
 Bale::askReview(
@@ -116,11 +116,11 @@ Bale::askReview(
 );
 ~~~
 
-هر دو مقدار integer و الزامی‌اند. `delaySeconds` تأخیر نمایش فرم از زمان فراخوانی را برحسب ثانیه تعیین می‌کند و پاسخ موفق Bale برابر `true` است.
+هر دو مقدار عدد صحیح و الزامی‌اند. `delaySeconds` تأخیر نمایش فرم از زمان فراخوانی را برحسب ثانیه تعیین می‌کند و پاسخ موفق Bale برابر `true` است.
 
 ## تست ربات بله در Laravel بدون درخواست واقعی
 
-برای تست integration لازم نیست URLهای Bale، envelope پاسخ یا جزئیات `Http::fake()` را بدانید:
+برای تست اتصال لازم نیست URLهای Bale، ساختار پاسخ یا جزئیات `Http::fake()` را بدانید:
 
 ~~~php
 Bale::fake();
@@ -133,11 +133,11 @@ Bale::assertSent('sendMessage', [
 ]);
 ~~~
 
-`Bale::fake()` فقط درخواست‌های Bot API و دانلود فایلِ همین پکیج را fake می‌کند؛ HTTP نامرتبط برنامه را جعل یا جزو assertionها حساب نمی‌کند. API تست عبارت است از `Bale::fake()`، `Bale::assertSent()`، `Bale::assertSentTimes()`، `Bale::assertNotSent()` و `Bale::assertNothingSent()`. assertionها endpoint رسمی مانند `sendMessage` را می‌بینند، نه convenience methodهایی مانند `replyToMessage`. اگر در همان تست از catch-all `Http::fake()` استفاده می‌کنید، ابتدا `Bale::fake()` را ثبت کنید؛ جزئیات، مثال پیشرفته‌تر و تست رسانه در [راهنمای تست](docs/testing.md) آمده است.
+`Bale::fake()` فقط درخواست‌های Bot API و دانلود فایلِ همین پکیج را شبیه‌سازی می‌کند؛ درخواست HTTP نامرتبط برنامه را شبیه‌سازی یا جزو بررسی‌ها حساب نمی‌کند. API تست عبارت است از `Bale::fake()`، `Bale::assertSent()`، `Bale::assertSentTimes()`، `Bale::assertNotSent()` و `Bale::assertNothingSent()`. بررسی‌ها متد رسمی مانند `sendMessage` را می‌بینند، نه متدهای کمکی مانند `replyToMessage`. اگر در همان تست از `Http::fake()` فراگیر استفاده می‌کنید، ابتدا `Bale::fake()` را ثبت کنید؛ جزئیات، مثال پیشرفته‌تر و تست رسانه در [راهنمای تست](docs/testing.md) آمده است.
 
 ## چطور به یک پیام بله پاسخ بدهیم؟
 
-روش low-level رسمی، `sendMessage` با `reply_to_message_id` است:
+روش رسمیِ سطح پایین، `sendMessage` با `reply_to_message_id` است:
 
 ~~~php
 Bale::sendMessage(
@@ -149,7 +149,7 @@ Bale::sendMessage(
 );
 ~~~
 
-برای این workflow تکراری از convenience method پکیج استفاده کنید:
+برای این روند تکراری از متد کمکی پکیج استفاده کنید:
 
 ~~~php
 Bale::replyToMessage(
@@ -161,11 +161,11 @@ Bale::replyToMessage(
 );
 ~~~
 
-این متد فقط `message_id` صحیح و `chat.id` صحیح را از raw Bale Message array می‌خواند؛ هر دو باید integer باشند. سپس `sendMessage` را فراخوانی می‌کند. `chat_id`، `text` و `reply_to_message_id` از خود workflow می‌آیند و با `options` قابل جایگزینی نیستند. شکل کامل Message اعتبارسنجی یا DTO نمی‌شود؛ ورودی ناقص پیش از هر درخواست HTTP با `InvalidArgumentException` رد می‌شود.
+این متد فقط `message_id` و `chat.id` صحیح را از آرایهٔ خام Bale Message می‌خواند؛ هر دو باید عدد صحیح باشند. سپس `sendMessage` را فراخوانی می‌کند. `chat_id`، `text` و `reply_to_message_id` از خود روند می‌آیند و با `options` قابل جایگزینی نیستند. شکل کامل Message اعتبارسنجی یا به DTO تبدیل نمی‌شود؛ ورودی ناقص پیش از هر درخواست HTTP با `InvalidArgumentException` رد می‌شود.
 
-## چطور دکمه Inline Keyboard و Callback Query بسازیم؟
+## چطور دکمه‌های درون‌خطی و Callback Query بسازیم؟
 
-ساختار array مستند Bale را مستقیماً به `reply_markup` بدهید؛ keyboard builder لازم نیست:
+آرایهٔ مستند Bale را مستقیماً به `reply_markup` بدهید؛ سازندهٔ دکمه لازم نیست:
 
 ~~~php
 Bale::sendMessage(
@@ -184,7 +184,7 @@ Bale::sendMessage(
 );
 ~~~
 
-هنگام دریافت `callback_query`، ابتدا query را پاسخ دهید. فیلد `message` در CallbackQuery می‌تواند موجود نباشد؛ فقط در صورت وجود، پیام را ویرایش کنید:
+هنگام دریافت `callback_query`، ابتدا Query را پاسخ دهید. فیلد `message` در CallbackQuery ممکن است وجود نداشته باشد؛ فقط در صورت وجود، پیام را ویرایش کنید:
 
 ~~~php
 $callback = $update['callback_query'];
@@ -200,15 +200,15 @@ if (isset($callback['message'])) {
 }
 ~~~
 
-این دو عملیات مستقل‌اند؛ پکیج helper ترکیبی callback+edit ندارد.
+این دو کار مستقل‌اند؛ پکیج متد کمکی ترکیبی Callback و ویرایش ندارد.
 
 ## ارسال فایل و رسانه: `file_id`، URL و آپلود محلی
 
 برای `sendPhoto`، `sendAudio`، `sendDocument`، `sendVideo`، `sendAnimation` و `sendVoice`:
 
-- `string` بدون تغییر به Bale می‌رود و باید یک Bale `file_id` یا HTTP URL باشد.
+- رشتهٔ `string` بدون تغییر به Bale می‌رود و باید یک `file_id` بله یا HTTP URL باشد.
 - `SplFileInfo` یعنی آپلود صریح فایل محلی با `multipart/form-data`.
-- رشتهٔ مسیر فایل محلی به‌صورت خودکار upload نمی‌شود.
+- رشتهٔ مسیر فایل محلی به‌صورت خودکار آپلود نمی‌شود.
 
 ~~~php
 use SplFileInfo;
@@ -241,17 +241,17 @@ Bale::sendPhoto(
 );
 ~~~
 
-برای album از `sendMediaGroup` و array مستند Bale استفاده کنید. attachment محلی باید نام صریح و `attach://name` متناظر داشته باشد.
+برای آلبوم از `sendMediaGroup` و آرایهٔ مستند Bale استفاده کنید. فایل پیوست محلی باید نامی روشن و `attach://name` متناظر داشته باشد.
 
 ## چطور فایل بله را دانلود کنیم؟
 
-`getFile($fileId)` یک درخواست رسمی برای metadata است. `downloadFile($fileId)` convenience method پکیج است که نخست `getFile` را اجرا می‌کند، `file_path` غیرخالی را می‌گیرد و محتوای binary را برمی‌گرداند:
+`getFile($fileId)` یک درخواست رسمی برای اطلاعات فایل است. `downloadFile($fileId)` متد کمکی پکیج است که ابتدا `getFile` را اجرا می‌کند، `file_path` غیرخالی را می‌گیرد و محتوای دودویی را برمی‌گرداند:
 
 ~~~php
 $contents = Bale::downloadFile($fileId);
 ~~~
 
-در برنامهٔ Laravel خودتان می‌توانید آن را با Storage compose کنید؛ پکیج به Filesystem وابسته نیست:
+در برنامهٔ Laravel خودتان می‌توانید آن را با Storage ذخیره کنید؛ پکیج به Filesystem وابسته نیست:
 
 ~~~php
 use Illuminate\Support\Facades\Storage;
@@ -262,11 +262,11 @@ Storage::put(
 );
 ~~~
 
-طبق مستندات رسمی فعلی Bale، بازوها تا ۲۰ مگابایت فایل دانلود می‌کنند و لینک دانلود حاصل از `getFile` برای یک ساعت تضمین‌شده است؛ با فراخوانی دوبارهٔ `getFile` لینک تازه می‌شود. پکیج این محدودیت را محلی enforce نمی‌کند، URL توکن‌دار را public نمی‌کند و فایل را تبدیل یا بررسی MIME نمی‌کند. اگر `file_path` معتبر نباشد، `UnexpectedValueException` پیش از درخواست دانلود رخ می‌دهد.
+طبق مستندات رسمی فعلی Bale، بازوها تا ۲۰ مگابایت فایل دانلود می‌کنند و لینک دانلود حاصل از `getFile` برای یک ساعت تضمین‌شده است؛ با فراخوانی دوبارهٔ `getFile` لینک تازه می‌شود. پکیج این محدودیت را محلی اعمال نمی‌کند، URL توکن‌دار را عمومی نمی‌کند و فایل را تبدیل یا MIME آن را بررسی نمی‌کند. اگر `file_path` معتبر نباشد، `UnexpectedValueException` پیش از درخواست دانلود رخ می‌دهد.
 
-## دریافت Update با Polling
+## دریافت Update به‌صورت دوره‌ای
 
-`getUpdates` دقیقاً یک درخواست می‌سازد؛ loop، queue و نگه‌داری offset با برنامهٔ شماست:
+`getUpdates` دقیقاً یک درخواست می‌سازد؛ حلقه، صف و نگه‌داری `offset` بر عهدهٔ برنامهٔ شماست:
 
 ~~~php
 $updates = Bale::getUpdates([
@@ -275,14 +275,14 @@ $updates = Bale::getUpdates([
     'timeout' => 30,
 ]);
 
-// پس از پردازش، offset بعدی را در storage برنامهٔ خودتان نگه دارید.
+// پس از پردازش، offset بعدی را در محل ذخیره‌سازی برنامهٔ خودتان نگه دارید.
 ~~~
 
-برای timeout صحیح integer، پکیج پنج ثانیه headroom انتقال HTTP در نظر می‌گیرد (حداقل ۳۰ ثانیه) بدون تغییر payload Bale.
+برای `timeout` با عدد صحیح، پکیج پنج ثانیه مهلت اضافی انتقال HTTP در نظر می‌گیرد (حداقل ۳۰ ثانیه)؛ بدون تغییر دادهٔ ارسالی Bale.
 
-## راه‌اندازی Webhook در Laravel
+## راه‌اندازی وب‌هوک در Laravel
 
-یک راه کامل Laravel 13 این است که route را در `routes/web.php` نگه دارید و فقط همان URI را از CSRF خارج کنید. route زیر دقیقاً این URL عمومی را می‌سازد: `https://example.test/bale/webhook`.
+یک راه کامل در Laravel 13 این است که مسیر را در `routes/web.php` نگه دارید و فقط همان نشانی را از CSRF خارج کنید. مسیر زیر دقیقاً این URL عمومی را می‌سازد: `https://example.test/bale/webhook`.
 
 ~~~php
 // routes/web.php
@@ -293,11 +293,11 @@ use Illuminate\Support\Facades\Route;
 Route::post('/bale/webhook', function (Request $request) {
     $update = $request->all();
 
-    // application logic
+    // منطق برنامه
 });
 ~~~
 
-چون `routes/web.php` در middleware گروه `web` قرار دارد، POST خارجی Bale CSRF token ندارد. در `bootstrap/app.php`، callback موجود `withMiddleware` را این‌گونه کامل کنید تا فقط همان مسیر مستثنا شود:
+چون `routes/web.php` در گروه میان‌افزار `web` قرار دارد، POST خارجی Bale توکن CSRF ندارد. در `bootstrap/app.php`، تابع موجود `withMiddleware` را این‌گونه کامل کنید تا فقط همان مسیر مستثنا شود:
 
 ~~~php
 use Illuminate\Foundation\Configuration\Middleware;
@@ -309,13 +309,13 @@ use Illuminate\Foundation\Configuration\Middleware;
 })
 ~~~
 
-حالا URL ثبت‌شده در Bale دقیقاً با route یکی است:
+حالا URL ثبت‌شده در Bale دقیقاً با مسیر یکی است:
 
 ~~~php
 Bale::setWebhook('https://example.test/bale/webhook');
 ~~~
 
-برای مشاهده یا حذف تنظیمات خروجی از `getWebhookInfo()` و `deleteWebhook()` استفاده کنید. پکیج webhook router، controller، middleware یا secret validation اختراع نمی‌کند.
+برای مشاهده یا حذف تنظیمات خروجی از `getWebhookInfo()` و `deleteWebhook()` استفاده کنید. پکیج مسیردهی وب‌هوک، کنترل‌کننده، میان‌افزار یا اعتبارسنجی راز فراهم نمی‌کند.
 
 ## ویرایش، کپی، فوروارد و حذف پیام
 
@@ -333,8 +333,8 @@ Bale::deleteMessage(chatId: 123456789, messageId: 42);
 ## خطاهای `BaleRequestException` و `RequestException` چه تفاوتی دارند؟
 
 - پاسخ معتبر Bale با `ok: false`، `Sajaddp\Bale\Exceptions\BaleRequestException` می‌دهد.
-- HTTP ناموفق خارج از envelope معتبر Bale، از جمله دانلود binary ناموفق، semantics خود Laravel HTTP Client یعنی `Illuminate\Http\Client\RequestException` را حفظ می‌کند.
-- پاسخ موفقِ malformed یا نتیجهٔ با شکل نامعتبر، `UnexpectedValueException` می‌دهد.
+- HTTP ناموفق خارج از ساختار پاسخ معتبر Bale، از جمله دانلود ناموفق محتوای دودویی، رفتار معمول Laravel HTTP Client یعنی `Illuminate\Http\Client\RequestException` را حفظ می‌کند.
+- پاسخ موفقِ بدساخت یا نتیجهٔ با شکل نامعتبر، `UnexpectedValueException` می‌دهد.
 
 ~~~php
 use Sajaddp\Bale\Exceptions\BaleRequestException;
@@ -348,28 +348,28 @@ try {
 
 ## تفاوت Bale و Telegram Bot API
 
-Bale از نظر نام‌گذاری به Telegram Bot API شباهت دارد، اما این پکیج فقط مستندات Bale را دنبال می‌کند. method، option یا رفتار Telegram-only را فرض نکنید. برای هر کار از API پشتیبانی‌شدهٔ پکیج و مستندات رسمی Bale استفاده کنید.
+Bale از نظر نام‌گذاری به Telegram Bot API شباهت دارد، اما این پکیج فقط مستندات Bale را دنبال می‌کند. متد، گزینه یا رفتار ویژهٔ Telegram را فرض نکنید. برای هر کار از API پشتیبانی‌شدهٔ پکیج و مستندات رسمی Bale استفاده کنید.
 
-## Laravel Boost و AI Coding
+## Laravel Boost و ابزارهای هوش مصنوعی
 
-پکیج یک Boost guideline و Skill با نام `bale-development` دارد. در اپلیکیشن مصرف‌کننده، بعد از نصب Laravel Boost اجرا کنید:
+پکیج یک راهنمای Boost و مهارتی با نام `bale-development` دارد. در برنامهٔ استفاده‌کننده، بعد از نصب Laravel Boost این دستور را اجرا کنید:
 
 ~~~shell
 php artisan boost:install
 ~~~
 
-این Skill به AI coding agent کمک می‌کند API واقعی پکیج، تفاوت wrapper رسمی و convenience method، رسانه، دانلود فایل، callback و مرز webhook/polling را درست استفاده کند.
+این مهارت به ابزارهای هوش مصنوعی کمک می‌کند API واقعی پکیج، تفاوت متد رسمی و متد کمکی، رسانه، دانلود فایل، Callback و مرز وب‌هوک و دریافت دوره‌ای را درست به کار ببرند.
 
 ## چه چیزهایی عمداً در این پکیج نیست؟
 
-- webhook framework، polling daemon یا Artisan polling command
-- command/handler system، conversation state یا DTOهای Message / Update / Chat
-- keyboard builder و helper ترکیبی callback+edit
+- چارچوب وب‌هوک، پردازشگر دریافت دوره‌ای یا فرمان Artisan برای دریافت دوره‌ای
+- سامانهٔ فرمان و پردازش، وضعیت گفتگو یا DTOهای Message / Update / Chat
+- سازندهٔ دکمه و متد کمکی ترکیبی Callback و ویرایش
 - تشخیص خودکار مسیر فایل محلی
-- public file URL حاوی bot token
-- `Storage` abstraction یا helper اختصاصی برای ذخیرهٔ فایل
+- URL عمومی فایلِ حاوی توکن بازو
+- انتزاع `Storage` یا متد کمکی اختصاصی برای ذخیرهٔ فایل
 
-این مرزها intentional هستند: Laravel Bale یک API client باقی می‌ماند، نه یک framework.
+این مرزها عمدی‌اند: Laravel Bale پکیجی برای API باقی می‌ماند، نه یک چارچوب.
 
 ## پرسش‌های متداول
 
@@ -383,19 +383,19 @@ php artisan boost:install
 
 ### آیا پکیج Webhook را خودش می‌سازد؟
 
-خیر. `setWebhook` فقط URL خروجی Bale را پیکربندی می‌کند. route دریافت‌کننده را در اپلیکیشن Laravel خودتان می‌نویسید.
+خیر. `setWebhook` فقط URL خروجی Bale را پیکربندی می‌کند. مسیر دریافت‌کننده را در برنامهٔ Laravel خودتان می‌نویسید.
 
-### آیا `getUpdates` خودش Loop اجرا می‌کند؟
+### آیا `getUpdates` خودش حلقه اجرا می‌کند؟
 
-خیر؛ یک درخواست می‌فرستد. اجرای loop و نگه‌داری offset با برنامهٔ شماست.
+خیر؛ یک درخواست می‌فرستد. اجرای حلقه و نگه‌داری `offset` بر عهدهٔ برنامهٔ شماست.
 
 ### چطور فایل دریافتی را ذخیره کنم؟
 
-در اپلیکیشن Laravel خودتان، `Storage::put('path', Bale::downloadFile($fileId))` را استفاده کنید. پکیج Filesystem dependency ندارد.
+در برنامهٔ Laravel خودتان، `Storage::put('path', Bale::downloadFile($fileId))` را استفاده کنید. پکیج به Filesystem وابسته نیست.
 
 ### آیا API بله دقیقاً همان Telegram Bot API است؟
 
-خیر. شباهت نام‌ها مجوز فرض‌کردن endpoint یا option نیست؛ مستندات Bale مرجع است.
+خیر. شباهت نام‌ها مجوز فرض‌کردن متد API یا گزینه نیست؛ مستندات Bale مرجع است.
 
 ## توسعهٔ پکیج
 
@@ -404,4 +404,4 @@ composer install
 composer test
 ~~~
 
-تست‌ها با Laravel HTTP fake اجرا می‌شوند و نباید درخواست واقعی Bale یا token واقعی بسازند.
+تست‌ها با شبیه‌سازی HTTP در Laravel اجرا می‌شوند و نباید درخواست واقعی Bale یا توکن واقعی بسازند.

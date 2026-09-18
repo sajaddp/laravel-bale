@@ -1,11 +1,11 @@
 ---
-title: Callback Query و Inline Keyboard بله در Laravel
-description: راهنمای InlineKeyboardMarkup خام، callback_data، url و پاسخ به Callback Query با Laravel Bale.
+title: Callback Query و دکمه‌های درون‌خطی بله در Laravel
+description: راهنمای ساختار خام InlineKeyboardMarkup، callback_data، url و پاسخ به Callback Query با Laravel Bale.
 ---
 
-# چطور Callback Query بله را پاسخ بدهیم؟
+# چطور به Callback Query بله پاسخ بدهیم؟
 
-برای Inline Keyboard، شکل raw array مستند Bale را مستقیماً در `reply_markup` بفرستید. Laravel Bale keyboard builder یا callback router ندارد.
+برای دکمه‌های درون‌خطی، آرایهٔ خام مستند Bale را مستقیماً در `reply_markup` بفرستید. Laravel Bale سازندهٔ دکمه یا مسیردهی Callback ندارد.
 
 ~~~php
 use Sajaddp\Bale\Facades\Bale;
@@ -26,11 +26,11 @@ Bale::sendMessage(
 );
 ~~~
 
-`callback_data` دادهٔ انتخاب application شماست و `url` کاربر را به لینک می‌برد. گزینه‌ها را فقط مطابق مستندات Bale برای همان object بفرستید.
+`callback_data` دادهٔ انتخاب برنامهٔ شماست و `url` کاربر را به لینک می‌برد. گزینه‌ها را فقط مطابق مستندات Bale برای همان ساختار بفرستید.
 
 ## ابتدا Query را پاسخ دهید
 
-پس از دریافت `callback_query`، `answerCallbackQuery` را فراخوانی کنید تا وضعیت انتظار دکمه پایان یابد. سپس، تنها اگر message همراه Query وجود دارد، آن را ویرایش کنید؛ `CallbackQuery.message` اختیاری است.
+پس از دریافت `callback_query`، `answerCallbackQuery` را فراخوانی کنید تا حالت انتظار دکمه پایان یابد. سپس فقط در صورت وجود پیام همراه Query، آن را ویرایش کنید؛ `CallbackQuery.message` اختیاری است.
 
 ~~~php
 $callback = $update['callback_query'];
@@ -49,4 +49,4 @@ if (isset($callback['message'])) {
 }
 ~~~
 
-پاسخ به Query و ویرایش پیام دو عملیات مستقل‌اند. برای APIهای `editMessageCaption`، `editMessageReplyMarkup` و حذف پیام، [راهنمای پیام‌ها](messages.md) را بخوانید و برای signatureها به [مرجع API](api-reference.md) رجوع کنید.
+پاسخ به Query و ویرایش پیام دو کار مستقل‌اند. برای APIهای `editMessageCaption`، `editMessageReplyMarkup` و حذف پیام، [راهنمای پیام‌ها](messages.md) را بخوانید و برای امضاها به [مرجع API](api-reference.md) رجوع کنید.
