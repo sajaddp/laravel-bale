@@ -1,25 +1,25 @@
 ---
-title: دستورپخت‌های Laravel Bale
-description: نمونه‌های کوتاه و واقعی Laravel Bale برای پیام، رسانه، callback، polling، webhook و تست.
+title: دستورپخت‌های لاراول بله
+description: نمونه‌های کوتاه و واقعی لاراول بله برای پیام، رسانه، پاسخ انتخاب، دریافت دوره‌ای، وب‌هوک و آزمون.
 ---
 
 # دستورپخت‌ها
 
-همهٔ مثال‌ها از API واقعی پکیج استفاده می‌کنند. برای امضاها به [مرجع API](api-reference.md) مراجعه کنید.
+همهٔ مثال‌ها از متدهای واقعی پکیج استفاده می‌کنند. برای امضاها به [مرجع رابط برنامه‌نویسی](api-reference.md) مراجعه کنید.
 
-## Send a message
+## ارسال پیام
 
 ~~~php
 Bale::sendMessage(chatId: 123456789, text: 'سلام');
 ~~~
 
-## Reply to a Message
+## پاسخ به پیام
 
 ~~~php
 Bale::replyToMessage($update['message'], 'پاسخ شما');
 ~~~
 
-## Inline Keyboard + Callback Query
+## دکمه‌های درون‌خطی و پاسخ انتخاب
 
 ~~~php
 Bale::sendMessage(
@@ -33,7 +33,7 @@ Bale::sendMessage(
 Bale::answerCallbackQuery(callbackQueryId: $update['callback_query']['id']);
 ~~~
 
-## Upload a local file
+## آپلود فایل محلی
 
 ~~~php
 Bale::sendDocument(
@@ -42,13 +42,13 @@ Bale::sendDocument(
 );
 ~~~
 
-## Reuse file_id
+## استفادهٔ دوباره از شناسهٔ فایل
 
 ~~~php
 Bale::sendDocument(chatId: 123456789, document: 'bale-file-id');
 ~~~
 
-## Download and save a file
+## دانلود و ذخیرهٔ فایل
 
 ~~~php
 use Illuminate\Support\Facades\Storage;
@@ -56,7 +56,7 @@ use Illuminate\Support\Facades\Storage;
 Storage::put('bale/report.pdf', Bale::downloadFile($fileId));
 ~~~
 
-## Send a media group
+## ارسال گروه رسانه
 
 ~~~php
 Bale::sendMediaGroup(
@@ -72,15 +72,15 @@ Bale::sendMediaGroup(
 );
 ~~~
 
-## Polling
+## دریافت دوره‌ای با `getUpdates`
 
 ~~~php
 $updates = Bale::getUpdates(['offset' => $nextOffset, 'timeout' => 30]);
 ~~~
 
-این یک درخواست است؛ loop و ذخیرهٔ offset با برنامهٔ شماست.
+این فقط یک درخواست است؛ حلقه و ذخیرهٔ `offset` بر عهدهٔ برنامهٔ شماست.
 
-## Webhook in Laravel 13
+## وب‌هوک در لاراول ۱۳
 
 ~~~php
 // routes/web.php
@@ -90,15 +90,15 @@ Route::post('/bale/webhook', fn (\Illuminate\Http\Request $request) => response(
 Bale::setWebhook('https://example.test/bale/webhook');
 ~~~
 
-برای جزئیات 419 به [رفع اشکال](troubleshooting.md) مراجعه کنید. پکیج route یا controller نمی‌سازد.
+برای جزئیات 419 به [رفع اشکال](troubleshooting.md) مراجعه کنید. پکیج مسیر یا کنترل‌کننده نمی‌سازد.
 
-## askReview
+## `askReview`
 
 ~~~php
 Bale::askReview(userId: 123456789, delaySeconds: 30);
 ~~~
 
-## Test a Bale integration
+## آزمون اتصال به بله
 
 ~~~php
 Bale::fake();
@@ -108,4 +108,4 @@ Bale::sendMessage(chatId: 123456789, text: 'سلام');
 Bale::assertSent('sendMessage', ['text' => 'سلام']);
 ~~~
 
-جزئیات در [راهنمای تست](testing.md) است.
+جزئیات در [راهنمای آزمون](testing.md) است.

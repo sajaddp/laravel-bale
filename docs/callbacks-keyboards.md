@@ -1,11 +1,11 @@
 ---
-title: Callback Query و Inline Keyboard بله در Laravel
-description: راهنمای InlineKeyboardMarkup خام، callback_data، url و پاسخ به Callback Query با Laravel Bale.
+title: دکمه‌های درون‌خطی و پاسخ انتخاب بله در لاراول
+description: راهنمای ساختار خام دکمه‌ها، دادهٔ انتخاب، نشانی و پاسخ به انتخاب کاربر با لاراول بله.
 ---
 
-# چطور Callback Query بله را پاسخ بدهیم؟
+# چطور به انتخاب کاربر در بله پاسخ بدهیم؟
 
-برای Inline Keyboard، شکل raw array مستند Bale را مستقیماً در `reply_markup` بفرستید. Laravel Bale keyboard builder یا callback router ندارد.
+برای دکمه‌های درون‌خطی، آرایهٔ خام مستند بله را مستقیماً در `reply_markup` بفرستید. لاراول بله سازندهٔ دکمه یا مسیردهی پاسخ انتخاب ندارد.
 
 ~~~php
 use Sajaddp\Bale\Facades\Bale;
@@ -26,11 +26,11 @@ Bale::sendMessage(
 );
 ~~~
 
-`callback_data` دادهٔ انتخاب application شماست و `url` کاربر را به لینک می‌برد. گزینه‌ها را فقط مطابق مستندات Bale برای همان object بفرستید.
+`callback_data` دادهٔ انتخاب برنامهٔ شماست و `url` کاربر را به نشانی پیوند می‌برد. گزینه‌ها را فقط مطابق مستندات بله برای همان ساختار بفرستید.
 
-## ابتدا Query را پاسخ دهید
+## ابتدا انتخاب را پاسخ دهید
 
-پس از دریافت `callback_query`، `answerCallbackQuery` را فراخوانی کنید تا وضعیت انتظار دکمه پایان یابد. سپس، تنها اگر message همراه Query وجود دارد، آن را ویرایش کنید؛ `CallbackQuery.message` اختیاری است.
+پس از دریافت `callback_query`، `answerCallbackQuery` را فراخوانی کنید تا حالت انتظار دکمه پایان یابد. سپس فقط در صورت وجود پیام همراه انتخاب، آن را ویرایش کنید؛ `message` در دادهٔ انتخاب اختیاری است.
 
 ~~~php
 $callback = $update['callback_query'];
@@ -49,4 +49,4 @@ if (isset($callback['message'])) {
 }
 ~~~
 
-پاسخ به Query و ویرایش پیام دو عملیات مستقل‌اند. برای APIهای `editMessageCaption`، `editMessageReplyMarkup` و حذف پیام، [راهنمای پیام‌ها](messages.md) را بخوانید و برای signatureها به [مرجع API](api-reference.md) رجوع کنید.
+پاسخ به انتخاب و ویرایش پیام دو کار مستقل‌اند. برای متدهای `editMessageCaption`، `editMessageReplyMarkup` و حذف پیام، [راهنمای پیام‌ها](messages.md) را بخوانید و برای امضاها به [مرجع رابط برنامه‌نویسی](api-reference.md) رجوع کنید.

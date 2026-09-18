@@ -1,25 +1,25 @@
 ---
-title: مستندات Laravel Bale برای Bale Bot API
-description: مرجع فارسی Laravel Bale برای استفاده از Bale Bot API در Laravel 13 و PHP 8.3+.
+title: مستندات لاراول بله برای رابط برنامه‌نویسی بازو
+description: مرجع فارسی لاراول بله برای استفاده از رابط برنامه‌نویسی بازوی بله در لاراول ۱۳ و پی‌اچ‌پی ۸٫۳ یا جدیدتر.
 ---
 
-# مستندات Laravel Bale
+# مستندات لاراول بله
 
-`sajaddp/laravel-bale` یک client کم‌حجم برای Bale Bot API در Laravel 13 و PHP 8.3+ است. این سایت مرجع ساخت‌یافتهٔ استفاده از پکیج در اکوسیستم لاراول است؛ همهٔ مثال‌ها فقط API واقعی پکیج را نشان می‌دهند و رفتار Bale را از مستندات رسمی بله می‌گیرند.
+`sajaddp/laravel-bale` پکیجی کم‌حجم برای کار با رابط برنامه‌نویسی بازوی بله در لاراول ۱۳ و پی‌اچ‌پی ۸٫۳ یا جدیدتر است. این سایت راهنمای منظم استفاده از پکیج در لاراول است؛ همهٔ مثال‌ها فقط رابط برنامه‌نویسی واقعی پکیج را نشان می‌دهند و رفتار بله را از مستندات رسمی آن می‌گیرند.
 
-پکیج هنوز در Packagist منتشر نشده است. [README اصلی](https://github.com/sajaddp/laravel-bale/blob/main/README.md) برای مرور سریع و این سایت برای راهنمای مرحله‌به‌مرحله و مرجع API است.
+پکیج هنوز در پکیجیست منتشر نشده است. [راهنمای اصلی](https://github.com/sajaddp/laravel-bale/blob/main/README.md) برای مرور سریع و این سایت برای راهنمای مرحله‌به‌مرحله و مرجع رابط برنامه‌نویسی است.
 
 - [شروع کار](getting-started.md): نصب، پیکربندی و نخستین پیام یا پاسخ.
 - [پیام‌ها](messages.md): ارسال، پاسخ، فوروارد، کپی، ویرایش و حذف پیام.
-- [Webhook](webhooks.md): دریافت Update در برنامهٔ Laravel 13 و تنظیم Bale.
-- [Polling](polling.md): یک درخواست `getUpdates`، offset و مسئولیت application.
-- [فایل و رسانه](files-media.md): ارسال، multipart، `file_id` و دانلود امن فایل.
-- [Callback و Keyboard](callbacks-keyboards.md): keyboard خام و پاسخ به Callback Query.
-- [مرجع API](api-reference.md): امضای تمام APIهای عمومی، با تفکیک wrapper رسمی، convenience و testing.
-- [پوشش Bale Bot API](api-coverage.md): پاسخ دقیق به این‌که method رسمی مشخصی پشتیبانی می‌شود یا نه.
-- [تست](testing.md): `Bale::fake()` و assertionهای Laravel-native.
-- [دستورپخت‌ها](recipes.md): workflowهای رایج با APIهای واقعی.
-- [رفع اشکال](troubleshooting.md): خطاها و مرزهای پرتکرار integration.
-- [AI Coding](ai-coding.md): مرزهای دقیق برای agentها و ابزارهای AI.
+- [وب‌هوک](webhooks.md): دریافت رویداد در برنامهٔ لاراول ۱۳ و تنظیم بله.
+- [دریافت دوره‌ای](polling.md): یک درخواست `getUpdates`، `offset` و مسئولیت برنامه.
+- [فایل و رسانه](files-media.md): ارسال، بارگذاری چندبخشی، `file_id` و دانلود امن فایل.
+- [دکمه‌ها و پاسخ انتخاب](callbacks-keyboards.md): ساختار خام دکمه‌ها و پاسخ به انتخاب کاربر.
+- [مرجع رابط برنامه‌نویسی](api-reference.md): امضای همهٔ متدهای عمومی و تفکیک متدهای رسمی، کمکی و آزمون.
+- [پوشش رابط برنامه‌نویسی بله](api-coverage.md): پاسخ دقیق به پشتیبانی‌شدن یا نشدن هر متد رسمی.
+- [آزمون](testing.md): `Bale::fake()` و بررسی‌های مبتنی بر لاراول.
+- [دستورپخت‌ها](recipes.md): روندهای رایج با متدهای واقعی.
+- [رفع اشکال](troubleshooting.md): خطاها و مرزهای پرتکرار اتصال.
+- [راهنمای هوش مصنوعی](ai-coding.md): مرزهای روشن برای ابزارهای هوش مصنوعی.
 
 برای مشارکت در خود پکیج، [راهنمای مشارکت](https://github.com/sajaddp/laravel-bale/blob/main/CONTRIBUTING.md) و [سیاست امنیتی](https://github.com/sajaddp/laravel-bale/blob/main/SECURITY.md) را بخوانید.

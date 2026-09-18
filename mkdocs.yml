@@ -1,7 +1,7 @@
-site_name: "Laravel Bale — مستندات Laravel برای Bale Bot API"
-site_url: "https://sajaddp.github.io/laravel-bale/"
-site_description: "مستندات فارسی Laravel Bale برای Bale Bot API در Laravel 13 و PHP 8.3+"
-site_author: "Sajad Dehshiri"
+site_name: "لاراول بله — مستندات رابط برنامه‌نویسی بازوی بله"
+site_url: "https://sajaddehshiri.ir/laravel-bale/"
+site_description: "مستندات فارسی لاراول بله برای کار با رابط برنامه‌نویسی بازوی بله در لاراول ۱۳ و پی‌اچ‌پی ۸٫۳ یا جدیدتر"
+site_author: "سجاد دهشیری"
 repo_url: "https://github.com/sajaddp/laravel-bale"
 repo_name: "sajaddp/laravel-bale"
 edit_uri: "edit/main/docs/"
@@ -31,12 +31,16 @@ theme:
 plugins:
   - search
 
+extra:
+  generator: false
+
 markdown_extensions:
   - admonition
   - attr_list
   - tables
   - toc:
       permalink: true
+      permalink_title: پیوند پایدار
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
@@ -45,7 +49,7 @@ markdown_extensions:
 extra_css:
   - stylesheets/extra.css
 
-copyright: "Laravel Bale · <a href=\"https://github.com/sajaddp/laravel-bale\">GitHub</a> · <a href=\"https://github.com/sajaddp/laravel-bale/blob/main/LICENSE\">MIT License</a>"
+copyright: "لاراول بله · <a href=\"https://github.com/sajaddp/laravel-bale\">گیت‌هاب</a> · <a href=\"https://github.com/sajaddp/laravel-bale/blob/main/LICENSE\">مجوز ام‌آی‌تی</a>"
 
 nav:
   - خانه: index.md
@@ -53,16 +57,16 @@ nav:
       - شروع سریع: getting-started.md
       - پیام‌ها: messages.md
   - راهنماها:
-      - Webhook: webhooks.md
-      - Polling: polling.md
+      - وب‌هوک: webhooks.md
+      - دریافت دوره‌ای: polling.md
       - فایل و رسانه: files-media.md
-      - Callback و Keyboard: callbacks-keyboards.md
-      - تست: testing.md
+      - دکمه‌ها و پاسخ انتخاب: callbacks-keyboards.md
+      - آزمون: testing.md
       - دستورپخت‌ها: recipes.md
   - مرجع:
-      - API Reference: api-reference.md
-      - Bale API Coverage: api-coverage.md
+      - مرجع رابط برنامه‌نویسی: api-reference.md
+      - پوشش رابط برنامه‌نویسی بله: api-coverage.md
       - رفع اشکال: troubleshooting.md
-  - AI Coding: ai-coding.md
+  - راهنمای هوش مصنوعی: ai-coding.md
   - پروژه:
-      - GitHub Repository: https://github.com/sajaddp/laravel-bale
+      - مخزن گیت‌هاب: https://github.com/sajaddp/laravel-bale

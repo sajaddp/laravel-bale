@@ -1,27 +1,27 @@
 ---
-title: رفع اشکال Laravel Bale
-description: خطاهای پرتکرار Laravel Bale برای توکن، Webhook، فایل، polling و مرز Bale با Telegram.
+title: رفع اشکال لاراول بله
+description: خطاهای پرتکرار لاراول بله برای توکن، وب‌هوک، فایل، دریافت دوره‌ای و مرز بله با تلگرام.
 ---
 
 # رفع اشکال
 
 ## `BALE_BOT_TOKEN` تنظیم نشده است
 
-پکیج پیش از ساخت URL، توکن خالی یا غیررشته‌ای را با `LogicException` رد می‌کند. `BALE_BOT_TOKEN` را در محیط برنامه تنظیم کنید و config cache برنامه را متناسب با deployment خود refresh کنید.
+پکیج پیش از ساخت نشانی، توکن خالی یا غیررشته‌ای را با `LogicException` رد می‌کند. `BALE_BOT_TOKEN` را در محیط برنامه تنظیم کنید و کش پیکربندی را متناسب با استقرار خود نوسازی کنید.
 
-## نوع exception چیست؟
+## نوع خطا چیست؟
 
-- `BaleRequestException`: Bale یک envelope معتبر با `ok: false` برگردانده است.
-- `RequestException`: پاسخ HTTP ناموفق یا دانلود binary ناموفق است که envelope معتبر Bale ندارد.
-- `UnexpectedValueException`: پاسخ موفق، `result` یا metadata فایل با contract مورد انتظار سازگار نیست.
+- `BaleRequestException`: بله یک ساختار پاسخ معتبر با `ok: false` برگردانده است.
+- `RequestException`: پاسخ اچ‌تی‌تی‌پی ناموفق یا دانلود محتوای دودویی ناموفق است که ساختار پاسخ معتبر بله ندارد.
+- `UnexpectedValueException`: پاسخ موفق، `result` یا اطلاعات فایل با قرارداد مورد انتظار سازگار نیست.
 
-## Webhook 419 یا URL اشتباه
+## وب‌هوک ۴۱۹ یا نشانی اشتباه
 
-در `routes/web.php`، POST خارجی Bale CSRF token ندارد. دقیقاً همان URI webhook را در `bootstrap/app.php` از CSRF خارج کنید؛ مثلاً `bale/webhook`. یا route را با طراحی امنیتی خودتان در محل مناسب قرار دهید. URL داده‌شده به `setWebhook` باید URL عمومی دقیق همان route باشد. پکیج route، controller یا secret validation نمی‌سازد.
+در `routes/web.php`، درخواست خارجی بله توکن محافظت درخواست ندارد. دقیقاً همان نشانی وب‌هوک را در `bootstrap/app.php` از محافظت درخواست خارج کنید؛ مثلاً `bale/webhook`. یا مسیر را با طراحی امنیتی خودتان در محل مناسب قرار دهید. نشانی داده‌شده به `setWebhook` باید نشانی عمومی دقیق همان مسیر باشد. پکیج مسیر، کنترل‌کننده یا اعتبارسنجی راز نمی‌سازد.
 
-## مسیر محلی رشته‌ای upload نمی‌شود
+## مسیر محلی رشته‌ای آپلود نمی‌شود
 
-`string` در API رسانه فقط Bale `file_id` یا HTTP URL است. برای upload، `SplFileInfo` بدهید:
+رشته در متدهای رسانه فقط `file_id` بله یا نشانی اچ‌تی‌تی‌پی است. برای بارگذاری، `SplFileInfo` بدهید:
 
 ~~~php
 new SplFileInfo(storage_path('app/file.pdf'))
@@ -29,20 +29,20 @@ new SplFileInfo(storage_path('app/file.pdf'))
 
 ## `replyToMessage` خطا می‌دهد
 
-ورودی باید raw Bale Message با `message_id` integer و `chat.id` integer باشد. object، string یا Message ناقص را تبدیل نکنید؛ دادهٔ Update را همان‌طور که دریافت شده بررسی کنید.
+ورودی باید دادهٔ خام پیام بله با `message_id` و `chat.id` عددی باشد. شیء، رشته یا پیام ناقص را تبدیل نکنید؛ دادهٔ رویداد را همان‌طور که دریافت شده بررسی کنید.
 
 ## فایل دانلود نشد
 
-`downloadFile` ابتدا `getFile` می‌زند. نتیجه باید `file_path` غیرخالی داشته باشد، وگرنه `UnexpectedValueException` رخ می‌دهد. URL دانلود حاوی توکن است؛ آن را log یا public نکنید. برای حفظ لینک تازه، در هر دریافت از `getFile` جدید استفاده کنید.
+`downloadFile` ابتدا `getFile` را فراخوانی می‌کند. نتیجه باید `file_path` غیرخالی داشته باشد، وگرنه `UnexpectedValueException` رخ می‌دهد. نشانی دانلود حاوی توکن است؛ آن را ثبت گزارش یا عمومی نکنید. برای تازه‌ماندن پیوند، در هر دریافت از `getFile` جدید استفاده کنید.
 
-## `attach://` برای media group کار نمی‌کند
+## `attach://` برای گروه رسانه کار نمی‌کند
 
-هر reference مانند `attach://first` باید یک attachment با کلید دقیق `first` و `SplFileInfo` قابل‌خواندن داشته باشد. برای upload multipart، فیلدهای JSON مانند `media` را پکیج serialize می‌کند.
+هر ارجاعی مانند `attach://first` باید یک فایل پیوست با کلید دقیق `first` و `SplFileInfo` قابل‌خواندن داشته باشد. برای بارگذاری چندبخشی، پکیج فیلدهای دادهٔ ساخت‌یافته مانند `media` را سریال‌سازی می‌کند.
 
-## Polling بیش از انتظار طول می‌کشد
+## دریافت دوره‌ای بیش از انتظار طول می‌کشد
 
-`getUpdates` long polling یک درخواست می‌سازد. timeout Bale را در options قرار دهید؛ پکیج برای timeout HTTP headroom مناسب اضافه می‌کند. loop، queue، backoff و offset persistence جزو این پکیج نیستند.
+`getUpdates` در دریافت طولانی‌مدت فقط یک درخواست می‌سازد. `timeout` بله را در `options` قرار دهید؛ پکیج برای زمان‌انتظار اچ‌تی‌تی‌پی مهلت اضافی مناسب می‌افزاید. حلقه، صف، فاصلهٔ افزایشی تلاش مجدد و ذخیرهٔ `offset` جزو این پکیج نیستند.
 
-## فرض Telegram-only
+## فرض نکنید رفتار تلگرام برقرار است
 
-شباهت نام‌ها به معنی سازگاری endpoint، field یا result نیست. [پوشش رسمی Bale](api-coverage.md) را بررسی کنید؛ API پشتیبانی‌نشده را با helper یا method خیالی جایگزین نکنید.
+شباهت نام‌ها به معنی سازگاری متد، فیلد یا نتیجه نیست. [پوشش رسمی بله](api-coverage.md) را بررسی کنید؛ متد پشتیبانی‌نشده را با متد کمکی یا متد خیالی جایگزین نکنید.

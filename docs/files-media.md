@@ -1,34 +1,34 @@
 ---
-title: فایل و رسانه بله در Laravel
-description: راهنمای file_id، URL، multipart، آپلود SplFileInfo و دانلود فایل بله با Laravel Bale.
+title: فایل و رسانه بله در لاراول
+description: راهنمای شناسهٔ فایل، نشانی، بارگذاری چندبخشی، بارگذاری با `SplFileInfo` و دانلود فایل بله با لاراول بله.
 ---
 
-# چطور فایل را به بله آپلود کنیم؟
+# چطور فایل را به بله بارگذاری کنیم؟
 
-برای `sendPhoto`، `sendAudio`، `sendDocument`، `sendVideo`، `sendVoice` و `sendAnimation`، مقدار `string` فقط یک `file_id` بله یا HTTP URL است. مسیر محلی به شکل string خودکار upload نمی‌شود.
+برای `sendPhoto`، `sendAudio`، `sendDocument`، `sendVideo`، `sendVoice` و `sendAnimation`، مقدار رشته‌ای فقط یک `file_id` بله یا نشانی اچ‌تی‌تی‌پی است. مسیر محلی به‌شکل رشته‌ای خودکار بارگذاری نمی‌شود.
 
 ~~~php
 use Sajaddp\Bale\Facades\Bale;
 use SplFileInfo;
 
-// استفادهٔ مجدد از فایل موجود Bale
+// استفادهٔ مجدد از فایل موجود بله
 Bale::sendDocument(
     chatId: 123456789,
     document: 'bale-file-id',
     options: ['caption' => 'فایل قبلی'],
 );
 
-// ارسال URL قابل‌دسترسی HTTP
+// ارسال نشانی قابل‌دسترسی اچ‌تی‌تی‌پی
 Bale::sendVideo(chatId: 123456789, video: 'https://example.test/video.mp4');
 
-// آپلود صریح محلی با multipart/form-data
+// بارگذاری صریح محلی با دادهٔ چندبخشی
 Bale::sendDocument(
     chatId: 123456789,
     document: new SplFileInfo(storage_path('app/report.pdf')),
 );
 ~~~
 
-طبق مستندات فعلی Bale، `sendPhoto` علاوه بر مقصد به `from_chat_id` نیاز دارد:
+طبق مستندات فعلی بله، `sendPhoto` علاوه بر مقصد به `from_chat_id` نیاز دارد:
 
 ~~~php
 Bale::sendPhoto(
@@ -38,9 +38,9 @@ Bale::sendPhoto(
 );
 ~~~
 
-## ارسال media group
+## ارسال گروه رسانه
 
-برای album از شکل raw array مستند Bale استفاده کنید. هر attachment محلی نام صریح و reference متناظر `attach://name` دارد.
+برای آلبوم از آرایهٔ خام مستند بله استفاده کنید. هر فایل پیوست محلی باید نامی روشن و ارجاع متناظر `attach://name` داشته باشد.
 
 ~~~php
 Bale::sendMediaGroup(
@@ -58,7 +58,7 @@ Bale::sendMediaGroup(
 
 ## چطور فایل دریافتی بله را دانلود کنیم؟
 
-`getFile($fileId)` wrapper رسمی برای metadata فایل است. `downloadFile($fileId)` convenience Laravel Bale است: نخست `getFile` را اجرا می‌کند، `file_path` غیرخالی را می‌خواهد و binary body را برمی‌گرداند. هیچ‌یک URL دانلود حاوی توکن را public نمی‌کنند.
+`getFile($fileId)` متد رسمی برای اطلاعات فایل است. `downloadFile($fileId)` متد کمکی لاراول بله است: ابتدا `getFile` را اجرا می‌کند، وجود `file_path` غیرخالی را می‌خواهد و محتوای دودویی را برمی‌گرداند. هیچ‌کدام نشانی دانلودِ حاوی توکن را عمومی نمی‌کنند.
 
 ~~~php
 use Illuminate\Support\Facades\Storage;
@@ -69,4 +69,4 @@ Storage::put(
 );
 ~~~
 
-Laravel Bale به Filesystem وابسته نیست؛ ذخیره‌سازی، نام فایل، MIME validation و access policy با application است. برای تست multipart و دانلود بدون شبکه، [راهنمای تست](testing.md) را ببینید.
+لاراول بله به سامانهٔ فایل وابسته نیست؛ ذخیره‌سازی، نام فایل، بررسی گونهٔ محتوا و سیاست دسترسی با برنامه است. برای آزمون بارگذاری چندبخشی و دانلود بدون شبکه، [راهنمای آزمون](testing.md) را ببینید.

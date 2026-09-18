@@ -9,3 +9,4 @@ composer.lock
 /site/
 /.cache/
 /.venv-docs/
+/.firecrawl/
