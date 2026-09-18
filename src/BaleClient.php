@@ -136,7 +136,11 @@ class BaleClient
      */
     public function getUpdates(array $options = []): array
     {
-        return $this->requestArray('getUpdates', $options);
+        $transportTimeout = is_int($options['timeout'] ?? null)
+            ? max(30, $options['timeout'] + 5)
+            : null;
+
+        return $this->requestArray('getUpdates', $options, $transportTimeout);
     }
 
     /**
@@ -198,11 +202,13 @@ class BaleClient
     /**
      * @param  array<int, array<string, mixed>>  $media
      * @param  array<string, mixed>  $options
-     * @param  array<string, SplFileInfo>  $attachments
+     * @param  array<array-key, SplFileInfo>  $attachments
      * @return array<mixed>
      */
     public function sendMediaGroup(int|string $chatId, array $media, array $options = [], array $attachments = []): array
     {
+        $this->assertMediaAttachmentsExist($media, $this->attachmentNames($attachments));
+
         $data = array_merge($options, [
             'chat_id' => $chatId,
             'media' => $media,
@@ -250,18 +256,22 @@ class BaleClient
     /**
      * @param  array<string, mixed>  $data
      */
-    private function request(string $method, array $data = []): mixed
+    private function request(string $method, array $data = [], int|float|null $transportTimeout = null): mixed
     {
-        $response = Http::acceptJson()
-            ->asJson()
-            ->post($this->urlFor($method), $data);
+        $request = Http::acceptJson()->asJson();
+
+        if ($transportTimeout !== null) {
+            $request = $request->timeout($transportTimeout);
+        }
+
+        $response = $request->post($this->urlFor($method), $data);
 
         return $this->parseResponse($response);
     }
 
     /**
      * @param  array<string, mixed>  $data
-     * @param  array<string, SplFileInfo>  $files
+     * @param  array<array-key, SplFileInfo>  $files
      * @param  array<int, string>  $jsonFields
      */
     private function requestMultipart(string $method, array $data, array $files, array $jsonFields = []): mixed
@@ -270,13 +280,13 @@ class BaleClient
         $paths = [];
 
         foreach ($files as $name => $file) {
-            $this->assertAttachmentName($name);
-            $paths[$name] = $this->readablePath($file);
+            $paths[(string) $name] = $this->readablePath($file);
         }
 
         $request = Http::acceptJson();
 
         foreach ($files as $name => $file) {
+            $name = (string) $name;
             $handle = fopen($paths[$name], 'rb');
 
             if ($handle === false) {
@@ -324,9 +334,9 @@ class BaleClient
      * @param  array<string, mixed>  $data
      * @return array<mixed>
      */
-    private function requestArray(string $method, array $data = []): array
+    private function requestArray(string $method, array $data = [], int|float|null $transportTimeout = null): array
     {
-        $result = $this->request($method, $data);
+        $result = $this->request($method, $data, $transportTimeout);
 
         if (! is_array($result)) {
             throw new UnexpectedValueException('Bale returned a successful response without an array result.');
@@ -370,7 +380,7 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $data
-     * @param  array<string, SplFileInfo>  $files
+     * @param  array<array-key, SplFileInfo>  $files
      * @param  array<int, string>  $jsonFields
      * @return array<mixed>
      */
@@ -401,11 +411,67 @@ class BaleClient
         return $data;
     }
 
-    private function assertAttachmentName(string $name): void
+    /**
+     * @param  array<int, array<string, mixed>>  $media
+     * @param  array<string, true>  $attachmentNames
+     */
+    private function assertMediaAttachmentsExist(array $media, array $attachmentNames): void
     {
-        if (preg_match('/^[A-Za-z0-9_-]+$/', $name) !== 1) {
-            throw new InvalidArgumentException('Bale attachment names may contain only letters, numbers, underscores, and hyphens.');
+        foreach ($this->mediaAttachmentReferences($media) as $name) {
+            if (! array_key_exists($name, $attachmentNames)) {
+                throw new InvalidArgumentException(sprintf('Bale media attachment "%s" does not have a matching local file.', $name));
+            }
         }
+    }
+
+    /**
+     * @param  array<int, mixed>  $media
+     * @return array<int, string>
+     */
+    private function mediaAttachmentReferences(array $media): array
+    {
+        $references = [];
+
+        foreach ($media as $item) {
+            if (! is_array($item)) {
+                continue;
+            }
+
+            if (isset($item['media']) && is_string($item['media'])) {
+                $this->addAttachmentReference($references, $item['media']);
+            }
+
+            if (in_array($item['type'] ?? null, ['audio', 'document', 'video'], true)
+                && isset($item['thumbnail'])
+                && is_string($item['thumbnail'])) {
+                $this->addAttachmentReference($references, $item['thumbnail']);
+            }
+        }
+
+        return $references;
+    }
+
+    /** @param array<int, string> $references */
+    private function addAttachmentReference(array &$references, string $value): void
+    {
+        if (str_starts_with($value, 'attach://')) {
+            $references[] = substr($value, strlen('attach://'));
+        }
+    }
+
+    /**
+     * @param  array<array-key, SplFileInfo>  $attachments
+     * @return array<string, true>
+     */
+    private function attachmentNames(array $attachments): array
+    {
+        $names = [];
+
+        foreach (array_keys($attachments) as $name) {
+            $names[(string) $name] = true;
+        }
+
+        return $names;
     }
 
     private function readablePath(SplFileInfo $file): string

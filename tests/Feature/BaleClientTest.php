@@ -520,6 +520,28 @@ it('gets updates with one JSON request and forwards documented options', functio
     });
 });
 
+it('gives Bale long-polling timeouts transport headroom without changing the payload', function (int $baleTimeout): void {
+    $transportTimeout = null;
+
+    Http::fake(function (Request $request, array $options) use (&$transportTimeout) {
+        $transportTimeout = $options['timeout'] ?? null;
+
+        return Http::response(['ok' => true, 'result' => []]);
+    });
+
+    expect(Bale::getUpdates(['timeout' => $baleTimeout]))->toBe([])
+        ->and($transportTimeout)->toBeInt()->toBeGreaterThan($baleTimeout);
+
+    Http::assertSent(function (Request $request) use ($baleTimeout): bool {
+        return $request->url() === 'https://tapi.bale.ai/bottest-token/getUpdates'
+            && $request->isJson()
+            && $request->data() === ['timeout' => $baleTimeout];
+    });
+})->with([
+    'sixty-second long poll' => [60],
+    'thirty-second boundary' => [30],
+]);
+
 it('sends every single media type as JSON with its documented fields', function (Closure $call, string $endpoint, array $expected): void {
     Http::fake([
         "https://tapi.bale.ai/bottest-token/{$endpoint}" => Http::response([
@@ -717,6 +739,124 @@ it('sends a media group as JSON when it has no local attachments', function (): 
                 'media' => $media,
             ];
     });
+});
+
+it('rejects a missing main media attachment before sending a request', function (): void {
+    expect(fn (): array => Bale::sendMediaGroup(
+        chatId: 10,
+        media: [['type' => 'photo', 'media' => 'attach://missing']],
+    ))->toThrow(InvalidArgumentException::class, 'does not have a matching local file');
+
+    Http::assertNothingSent();
+});
+
+it('rejects a missing documented thumbnail attachment before sending a request', function (): void {
+    $path = tempnam(sys_get_temp_dir(), 'bale-other-');
+    file_put_contents($path, 'other attachment');
+
+    try {
+        expect(fn (): array => Bale::sendMediaGroup(
+            chatId: 10,
+            media: [[
+                'type' => 'video',
+                'media' => 'video-file-id',
+                'thumbnail' => 'attach://thumb',
+            ]],
+            attachments: ['other' => new SplFileInfo($path)],
+        ))->toThrow(InvalidArgumentException::class, 'does not have a matching local file');
+
+        Http::assertNothingSent();
+    } finally {
+        unlink($path);
+    }
+});
+
+it('sends matching media and thumbnail attachments as multipart', function (): void {
+    $videoPath = tempnam(sys_get_temp_dir(), 'bale-video-');
+    $thumbnailPath = tempnam(sys_get_temp_dir(), 'bale-thumbnail-');
+    file_put_contents($videoPath, 'video attachment');
+    file_put_contents($thumbnailPath, 'thumbnail attachment');
+
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/sendMediaGroup' => Http::response([
+            'ok' => true,
+            'result' => [['message_id' => 306]],
+        ]),
+    ]);
+
+    try {
+        expect(Bale::sendMediaGroup(
+            chatId: 10,
+            media: [[
+                'type' => 'video',
+                'media' => 'attach://video',
+                'thumbnail' => 'attach://thumb',
+            ]],
+            attachments: [
+                'video' => new SplFileInfo($videoPath),
+                'thumb' => new SplFileInfo($thumbnailPath),
+            ],
+        ))->toBe([['message_id' => 306]]);
+
+        Http::assertSent(function (Request $request) use ($videoPath, $thumbnailPath): bool {
+            return $request->isMultipart()
+                && $request->hasFile('video', null, basename($videoPath))
+                && $request->hasFile('thumb', null, basename($thumbnailPath))
+                && str_contains($request->body(), '"media":"attach:\/\/video"')
+                && str_contains($request->body(), '"thumbnail":"attach:\/\/thumb"');
+        });
+    } finally {
+        unlink($videoPath);
+        unlink($thumbnailPath);
+    }
+});
+
+it('supports dotted multipart attachment names', function (): void {
+    $path = tempnam(sys_get_temp_dir(), 'bale-dotted-');
+    file_put_contents($path, 'dotted attachment');
+
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/sendMediaGroup' => Http::response(['ok' => true, 'result' => [['message_id' => 307]]]),
+    ]);
+
+    try {
+        Bale::sendMediaGroup(
+            chatId: 10,
+            media: [['type' => 'photo', 'media' => 'attach://cover.thumb']],
+            attachments: ['cover.thumb' => new SplFileInfo($path)],
+        );
+
+        Http::assertSent(function (Request $request) use ($path): bool {
+            return $request->isMultipart()
+                && $request->hasFile('cover.thumb', null, basename($path));
+        });
+    } finally {
+        unlink($path);
+    }
+});
+
+it('normalizes numeric attachment keys to multipart field names', function (): void {
+    $path = tempnam(sys_get_temp_dir(), 'bale-numeric-');
+    file_put_contents($path, 'numeric attachment');
+
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/sendMediaGroup' => Http::response(['ok' => true, 'result' => [['message_id' => 308]]]),
+    ]);
+
+    try {
+        Bale::sendMediaGroup(
+            chatId: 10,
+            media: [['type' => 'photo', 'media' => 'attach://1']],
+            attachments: [1 => new SplFileInfo($path)],
+        );
+
+        Http::assertSent(function (Request $request) use ($path): bool {
+            return $request->isMultipart()
+                && $request->hasFile('1', null, basename($path));
+        });
+    } finally {
+        unlink($path);
+    }
 });
 
 it('sends media group attachments as multipart and JSON serializes media', function (): void {

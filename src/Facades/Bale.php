@@ -28,7 +28,7 @@ use Sajaddp\Bale\BaleClient;
  * @method static array<mixed> sendVideo(int|string $chatId, string|\SplFileInfo $video, array<string, mixed> $options = [])
  * @method static array<mixed> sendAnimation(int|string $chatId, string|\SplFileInfo $animation, array<string, mixed> $options = [])
  * @method static array<mixed> sendVoice(int|string $chatId, string|\SplFileInfo $voice, array<string, mixed> $options = [])
- * @method static array<mixed> sendMediaGroup(int|string $chatId, array<int, array<string, mixed>> $media, array<string, mixed> $options = [], array<string, \SplFileInfo> $attachments = [])
+ * @method static array<mixed> sendMediaGroup(int|string $chatId, array<int, array<string, mixed>> $media, array<string, mixed> $options = [], array<array-key, \SplFileInfo> $attachments = [])
  * @method static array<mixed> sendLocation(int|string $chatId, float $latitude, float $longitude, array<string, mixed> $options = [])
  * @method static array<mixed> sendContact(int|string $chatId, int|string $phoneNumber, string $firstName, array<string, mixed> $options = [])
  * @method static array<mixed> getFile(string $fileId)
