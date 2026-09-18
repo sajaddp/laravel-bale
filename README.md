@@ -1,192 +1,254 @@
-# Laravel Bale — پکیج Laravel 13 برای Bale Bot API
+# لاراول بله؛ پکیج ساخت ربات بله با لاراول
 
-[![Tests](https://github.com/sajaddp/laravel-bale/actions/workflows/tests.yml/badge.svg)](https://github.com/sajaddp/laravel-bale/actions/workflows/tests.yml)
+[![آزمون‌های خودکار](https://github.com/sajaddp/laravel-bale/actions/workflows/tests.yml/badge.svg)](https://github.com/sajaddp/laravel-bale/actions/workflows/tests.yml)
 
-A minimal Laravel 13 integration for the Bale Bot API.
+**لاراول بله، با نام پکیج `sajaddp/laravel-bale`، برای اتصال برنامه‌های لاراول به ربات‌های پیام‌رسان بله ساخته شده.** با این پکیج می‌توانید پیام و فایل بفرستید، به کاربران پاسخ بدهید، دکمه‌های تعاملی بسازید و پیام‌های دریافتی ربات را در برنامهٔ خود پردازش کنید.
 
-`sajaddp/laravel-bale` یک کلاینت کم‌حجم برای فراخوانی Bale Bot API در Laravel 13 است. این پکیج PHP 8.3+ را پشتیبانی می‌کند، پاسخ‌های مستند بله را به آرایه یا مقدار نتیجه تبدیل می‌کند و عمداً یک bot framework نیست.
+ارسال اعلان‌های یک سامانه، تحویل گزارش به کاربر و پاسخ‌گویی در ربات پشتیبانی، نمونه‌هایی از کاربرد آن هستند. ارسال درخواست و خواندن پاسخ بله بر عهدهٔ پکیج هست؛ منطق سرویس شما در همان برنامهٔ لاراول باقی می‌ماند.
 
-## چرا Laravel Bale؟
+[مستندات فارسی لاراول بله](https://sajaddehshiri.ir/laravel-bale/) · [شروع کار](#installation) · [آزمون بدون ارسال واقعی](#testing) · [کدنویسی با هوش مصنوعی](#ai-development) · [فهرست متدها](#methods)
 
-برای کارهای رایج مانند ارسال پیام، رسانه، Webhook، Polling، Callback Query و فایل، از Facade و Laravel HTTP Client استفاده می‌کنید؛ بدون route، worker، DTO یا state machine پنهان. رفتار Bale همیشه از مستندات رسمی بله می‌آید، نه از فرض سازگاری با Telegram.
+## امکانات اصلی
 
-## نیازمندی‌ها
+| نیاز شما | امکان پکیج |
+| --- | --- |
+| ارسال پیام و پاسخ به کاربر | ارسال متن، پاسخ به پیام، ویرایش، کپی، بازفرستادن و حذف پیام |
+| فرستادن و دریافت فایل | ارسال عکس، سند، صدا و ویدیو؛ آپلود فایل محلی؛ استفادهٔ دوباره از فایل بله؛ دانلود محتوای فایل |
+| ساخت تعامل با کاربر | دکمه‌های درون‌خطی، پاسخ به کلیک کاربر و درخواست ثبت نظر با `askReview` |
+| دریافت پیام‌های ربات | تنظیم وب‌هوک یا دریافت رویدادها با `getUpdates` |
+| آزمایش اتصال در برنامهٔ لاراول | شبیه‌سازی درخواست‌ها با `Bale::fake()` و بررسی ارسال‌ها بدون ارتباط واقعی با بله |
+| استفاده همراه ابزارهای هوش مصنوعی | راهنما و مهارت اختصاصی لاراول بوست، همراه با مرجع متدها و نمونه‌های قابل‌استفاده |
 
-- Laravel 13
-- PHP 8.3 یا جدیدتر
+نسخهٔ فعلی ۲۵ متد رسمی بله، ۲ متد کمکی و ۵ ابزار آزمون دارد. [جدول پوشش رابط بله](docs/api-coverage.md) مشخص می‌کند کدام متدهای رسمی پیاده‌سازی شده‌اند و کدام هنوز پشتیبانی نمی‌شوند.
 
-## نصب و تنظیم `BALE_BOT_TOKEN`
+<a name="installation"></a>
 
-این پکیج در زمان نگارش هنوز در Packagist منتشر نشده است؛ پس فرمان زیر دستور نصب موردنظر پس از انتشار است، نه یک نصب عمومیِ فعال در حال حاضر:
+## نصب در لاراول و ارسال نخستین پیام
 
-~~~shell
+### نیازمندی‌ها
+
+| مورد | مقدار |
+| --- | --- |
+| لاراول | نسخهٔ ۱۳ |
+| پی‌اچ‌پی | نسخهٔ ۸.۳ یا بالاتر در شاخهٔ ۸ |
+| نام پکیج | `sajaddp/laravel-bale` |
+| مجوز | [ام‌آی‌تی](LICENSE) |
+
+### نصب نسخهٔ توسعه
+
+پروژه در مرحلهٔ آماده‌سازی نخستین انتشار پایدار هست. برای بررسی پکیج در یک برنامهٔ لاراول ۱۳، مخزن را به کامپوزر معرفی و شاخهٔ توسعه را نصب کنید:
+
+```shell
+composer config repositories.bale vcs https://github.com/sajaddp/laravel-bale
+composer require sajaddp/laravel-bale:dev-main
+```
+
+این فرمان نسخهٔ توسعه را نصب می‌کند، نه نسخهٔ پایدار. وضعیت نسخه‌های برچسب‌خورده را در [صفحهٔ انتشارها](https://github.com/sajaddp/laravel-bale/releases) ببینید. پس از انتشار نسخهٔ پایدار در پکیجیست، فرمان معمول نصب چنین خواهد بود:
+
+```shell
 composer require sajaddp/laravel-bale
-~~~
+```
 
-پس از نصب، Laravel provider را خودکار کشف می‌کند. توکن بازو را در محیط برنامه قرار دهید:
+### ساخت ربات و تنظیم توکن
 
-~~~dotenv
+طبق [راهنمای رسمی ساخت بازوی بله](https://docs.bale.ai/)، ربات را از طریق [بازوی پدر](https://ble.ir/botfather) بسازید و توکن آن را دریافت کنید. «بازو» نامی هست که بله برای ربات‌های خود به کار می‌برد.
+
+توکن را در فایل `.env` برنامه قرار دهید؛ آن را در کد، مخزن یا گزارش عمومی منتشر نکنید:
+
+```dotenv
 BALE_BOT_TOKEN=your-bot-token
-~~~
+```
 
-در صورت نیاز، تنها تنظیم واقعی پکیج را منتشر کنید:
+لاراول پکیج را پس از نصب به‌صورت خودکار شناسایی می‌کند. انتشار فایل تنظیمات اختیاری هست:
 
-~~~shell
+```shell
 php artisan vendor:publish --tag=bale-config
-~~~
+```
 
-Facade را صریحاً import کنید:
+### ارسال پیام
 
-~~~php
+نمونهٔ زیر را در کد برنامهٔ لاراول اجرا کنید. شناسهٔ گفتگو را با مقصد واقعی جایگزین کنید:
+
+```php
 use Sajaddp\Bale\Facades\Bale;
-~~~
-
-## راهنمای عمیق‌تر
-
-README برای شروع سریع است. مستندات ساخت‌یافتهٔ مخزن جزئیات و مرجع کامل را نگه می‌دارند:
-
-- [مستندات آنلاین (پس از فعال‌شدن GitHub Pages)](https://sajaddp.github.io/laravel-bale/)
-- [شروع کار](docs/getting-started.md)
-- [پیام‌ها](docs/messages.md)
-- [Webhook](docs/webhooks.md)
-- [Polling](docs/polling.md)
-- [فایل و رسانه](docs/files-media.md)
-- [Callback و Keyboard](docs/callbacks-keyboards.md)
-- [مرجع API](docs/api-reference.md)
-- [پوشش Bale Bot API](docs/api-coverage.md)
-- [تست](docs/testing.md)
-- [دستورپخت‌ها](docs/recipes.md)
-- [رفع اشکال](docs/troubleshooting.md)
-- [AI Coding](docs/ai-coding.md)
-
-## شروع سریع: چطور با Laravel به بله پیام بفرستیم؟
-
-~~~php
-use Sajaddp\Bale\Facades\Bale;
-
-$bot = Bale::getMe();
 
 $message = Bale::sendMessage(
     chatId: 123456789,
-    text: 'سلام',
+    text: 'گزارش شما آماده شد.',
 );
-~~~
+```
 
-آرگومان‌های الزامی هر متد بر کلید همنام در `options` مقدم‌اند. برای `options` فقط فیلدهایی را بفرستید که Bale برای همان endpoint مستند کرده است.
+نتیجه، آرایهٔ پیام ارسال‌شده هست. برای بررسی توکن و دریافت مشخصات ربات نیز می‌توانید `Bale::getMe()` را فراخوانی کنید. مقصد پیام، شناسهٔ عددی گفتگو یا نام کاربری کانال با قالبی مانند `@channelname` هست؛ شرایط دسترسی مقصد تابع مقررات بله باقی می‌ماند.
 
-## متدهای رسمی Bale Bot API که پشتیبانی می‌شوند
+<a name="ai-development"></a>
 
-این جدول از public API فعلی `BaleClient` ساخته شده است. همهٔ موارد این بخش wrapper مستقیم یک روش رسمی Bale Bot API هستند، نه یک endpoint خیالی.
+## کدنویسی با هوش مصنوعی و لاراول بوست
 
-| گروه | Package method | کاربرد | خروجی |
-| --- | --- | --- | --- |
-| Bot | `getMe` | اطلاعات بازو | `array` |
-| Messaging | `sendMessage` | ارسال متن | `array` |
-| Messaging | `forwardMessage` / `copyMessage` | فوروارد یا کپی پیام | `array` |
-| Messaging | `sendChatAction` | نمایش action در گفتگو | `bool` |
-| Webhook | `setWebhook` / `deleteWebhook` | ثبت یا حذف Webhook خروجی | `bool` |
-| Webhook | `getWebhookInfo` | اطلاعات Webhook | `array` |
-| Updates | `getUpdates` | دریافت یک‌بارهٔ Updateها | `array` |
-| Callbacks | `answerCallbackQuery` | پاسخ به Callback Query | `bool` |
-| Review | `askReview` | درخواست ثبت یا ویرایش نظر دربارهٔ بازو | `bool` |
-| Message operations | `editMessageText` / `editMessageCaption` / `editMessageReplyMarkup` | ویرایش پیام یا Inline Keyboard | نتیجهٔ خام Bale |
-| Message operations | `deleteMessage` | حذف پیام | `bool` |
-| Media / files | `sendPhoto` / `sendAudio` / `sendDocument` / `sendVideo` / `sendAnimation` / `sendVoice` | ارسال یک رسانه | `array` |
-| Media / files | `sendMediaGroup` | ارسال گروه رسانه | `array` |
-| Media / files | `getFile` | دریافت metadata فایل | `array` |
-| Location / contact | `sendLocation` / `sendContact` | ارسال موقعیت یا مخاطب | `array` |
+لاراول بله راهنمای استفاده و مهارت اختصاصی `bale-development` را همراه پکیج ارائه می‌کند. این منابع، متدهای موجود، ورودی‌ها، ارسال فایل و روش آزمون را در اختیار ابزار کدنویسی قرار می‌دهند تا برای کار با پکیج، نمونه و قرارداد مشخص داشته باشد.
 
-## امکانات اضافهٔ Laravel Bale
+پس از نصب پکیج، در محیط توسعهٔ برنامهٔ لاراول اجرا کنید:
 
-دو متد زیر endpoint مستقیم Bale نیستند. آن‌ها فقط workflowهای تکراری را با APIهای رسمی بالا compose می‌کنند؛ برای AI coding agent نیز این تمایز مهم است.
+```shell
+composer require laravel/boost --dev
+php artisan boost:install
+```
 
-| Laravel Bale convenience method | بر پایهٔ API رسمی | خروجی |
-| --- | --- | --- |
-| `replyToMessage` | `sendMessage` و `reply_to_message_id` | `array` |
-| `downloadFile` | `getFile` و دانلود فایل مستندشدهٔ Bale | `string` binary |
+مطابق [راهنمای رسمی لاراول بوست](https://laravel.com/docs/13.x/boost)، هنگام اجرای `boost:install` راهنمای پکیج بارگذاری می‌شود و نصب مهارت‌ها به انتخاب شما بستگی دارد. نصب با کامپوزر به‌تنهایی جای این مرحله را نمی‌گیرد. استفادهٔ معمول از پکیج نیز به نصب بوست وابسته نیست.
 
-## درخواست نظر با `askReview`
+| منبع | کاربرد |
+| --- | --- |
+| [راهنمای کوتاه پکیج](resources/boost/guidelines/core.blade.php) | قواعد اصلی استفاده در محیط کدنویسی |
+| [مهارت اختصاصی بله](resources/boost/skills/bale-development/SKILL.md) | نمونه‌های ارسال پیام، رسانه، دریافت رویداد و آزمون |
+| [مرجع متدها](docs/api-reference.md) | ورودی و خروجی دقیق قابلیت‌های موجود |
+| [جدول پوشش بله](docs/api-coverage.md) | تشخیص متدهای پشتیبانی‌شده پیش از تولید کد |
 
-`askReview` یک wrapper رسمی Bale Bot API است، نه helper پکیج. طبق مستندات رسمی، برای نمایش فرم ثبت یا ویرایش نظر دربارهٔ بازو به کار می‌رود؛ نمایش نهایی آن به پشتیبانی نسخهٔ Bale client و شرایط کاربر بستگی دارد.
+برای شروع می‌توانید از ابزار خود بخواهید:
 
-~~~php
-Bale::askReview(
-    userId: 123456789,
-    delaySeconds: 30,
-);
-~~~
+> در برنامهٔ لاراول من، پس از آماده‌شدن گزارش، یک پیام با لاراول بله ارسال کن. از مهارت اختصاصی بله استفاده کن و آزمونی بنویس که متن و مقصد پیام را بدون ارسال واقعی بررسی کند.
 
-هر دو مقدار integer و الزامی‌اند. `delaySeconds` تأخیر نمایش فرم از زمان فراخوانی را برحسب ثانیه تعیین می‌کند و پاسخ موفق Bale برابر `true` است.
+[راهنمای کامل استفاده با هوش مصنوعی](https://sajaddehshiri.ir/laravel-bale/ai-coding/)
 
-## تست ربات بله در Laravel بدون درخواست واقعی
+<a name="testing"></a>
 
-برای تست integration لازم نیست URLهای Bale، envelope پاسخ یا جزئیات `Http::fake()` را بدانید:
+## چطور کد ربات را بدون ارسال پیام واقعی آزمون کنیم؟
 
-~~~php
+در محیط آزمون لاراول، یک توکن آزمایشی تنظیم کنید و پیش از اجرای کدی که با بله ارتباط دارد، `Bale::fake()` را فراخوانی کنید:
+
+```php
+use Sajaddp\Bale\Facades\Bale;
+
+config(['bale.token' => 'test-token']);
 Bale::fake();
 
-$order->confirm();
+Bale::sendMessage(
+    chatId: 123456789,
+    text: 'گزارش شما آماده شد.',
+);
 
 Bale::assertSent('sendMessage', [
     'chat_id' => 123456789,
-    'text' => 'سفارش شما تأیید شد',
+    'text' => 'گزارش شما آماده شد.',
 ]);
-~~~
+Bale::assertSentTimes('sendMessage', 1);
+Bale::assertNotSent('sendDocument');
+```
 
-`Bale::fake()` فقط درخواست‌های Bot API و دانلود فایلِ همین پکیج را fake می‌کند؛ HTTP نامرتبط برنامه را جعل یا جزو assertionها حساب نمی‌کند. API تست عبارت است از `Bale::fake()`، `Bale::assertSent()`، `Bale::assertSentTimes()`، `Bale::assertNotSent()` و `Bale::assertNothingSent()`. assertionها endpoint رسمی مانند `sendMessage` را می‌بینند، نه convenience methodهایی مانند `replyToMessage`. اگر در همان تست از catch-all `Http::fake()` استفاده می‌کنید، ابتدا `Bale::fake()` را ثبت کنید؛ جزئیات، مثال پیشرفته‌تر و تست رسانه در [راهنمای تست](docs/testing.md) آمده است.
+در این نمونه پیام واقعی ارسال نمی‌شود. در آزمون برنامهٔ خود، به‌جای فراخوانی مستقیم `sendMessage`، بخشی از برنامه را اجرا کنید که باید پیام بفرستد؛ سپس مقصد، متن و تعداد درخواست‌ها را بررسی کنید.
 
-## چطور به یک پیام بله پاسخ بدهیم؟
+| ابزار آزمون | کاربرد |
+| --- | --- |
+| `Bale::fake()` | شبیه‌سازی درخواست‌های بله برای توکن تنظیم‌شده |
+| `Bale::assertSent()` | بررسی ارسال یک متد، با امکان بررسی داده‌ها یا استفاده از تابع شرط |
+| `Bale::assertSentTimes()` | بررسی تعداد ارسال‌های یک متد |
+| `Bale::assertNotSent()` | بررسی ارسال‌نشدن یک متد یا درخواست مطابق شرط |
+| `Bale::assertNothingSent()` | بررسی اینکه هیچ درخواست بله‌ای ثبت نشده باشد |
 
-روش low-level رسمی، `sendMessage` با `reply_to_message_id` است:
+در بررسی آرایه‌ای، همهٔ کلیدهای مورد انتظار باید وجود داشته باشند و مقدار و نوع دادهٔ آن‌ها برابر باشد؛ درخواست می‌تواند کلیدهای اضافه داشته باشد. توکن واقعی لازم نیست، اما مقدار آزمایشی توکن باید تنظیم شود. ابزارهای بررسی در محیط آزمون دارای پی‌اچ‌پی‌یونیت یا پست استفاده می‌شوند.
 
-~~~php
-Bale::sendMessage(
-    chatId: $message['chat']['id'],
-    text: 'پاسخ شما',
-    options: [
-        'reply_to_message_id' => $message['message_id'],
-    ],
-);
-~~~
+برای ترکیب با شبیه‌سازی فراگیر لاراول، ابتدا `Bale::fake()` و سپس `Http::fake()` بدون آرگومان یا دارای الگوی `'*'` را ثبت کنید. شبیه‌سازی‌های محدود به نشانی سرویس‌های دیگر، در صورتی که نشانی بله را شامل نشوند، در هر ترتیب قابل‌استفاده‌اند.
 
-برای این workflow تکراری از convenience method پکیج استفاده کنید:
+این بررسی‌ها نام متد رسمی را می‌بینند: پاسخ‌دادن با `replyToMessage` را با `assertSent('sendMessage')` بررسی کنید. برای پاسخ خطای دلخواه یا آزمون جزئیات ارسال فایل، [راهنمای آزمون](https://sajaddehshiri.ir/laravel-bale/testing/) را ببینید.
 
-~~~php
+## چطور به پیام کاربر پاسخ بدهیم؟
+
+وقتی آرایهٔ پیام دریافتی را دارید، `replyToMessage` شناسهٔ گفتگو و شناسهٔ همان پیام را استخراج و پاسخ را ارسال می‌کند:
+
+```php
+use Sajaddp\Bale\Facades\Bale;
+
 Bale::replyToMessage(
-    message: $message,
-    text: 'پاسخ شما',
-    options: [
-        'reply_markup' => ['inline_keyboard' => []],
-    ],
+    message: $update['message'],
+    text: 'پیام شما دریافت شد.',
 );
-~~~
+```
 
-این متد فقط `message_id` صحیح و `chat.id` صحیح را از raw Bale Message array می‌خواند؛ هر دو باید integer باشند. سپس `sendMessage` را فراخوانی می‌کند. `chat_id`، `text` و `reply_to_message_id` از خود workflow می‌آیند و با `options` قابل جایگزینی نیستند. شکل کامل Message اعتبارسنجی یا DTO نمی‌شود؛ ورودی ناقص پیش از هر درخواست HTTP با `InvalidArgumentException` رد می‌شود.
+فیلدهای `message_id` و `chat.id` باید عدد صحیح باشند. ورودی ناقص پیش از ارسال درخواست با `InvalidArgumentException` رد می‌شود.
 
-## چطور دکمه Inline Keyboard و Callback Query بسازیم؟
+این متد کمکی بر پایهٔ `sendMessage` و `reply_to_message_id` کار می‌کند. مقصد، متن و شناسهٔ پیام پاسخ‌داده‌شده با گزینه‌های اضافی قابل جایگزینی نیستند. [راهنمای ارسال و مدیریت پیام](https://sajaddehshiri.ir/laravel-bale/messages/)
 
-ساختار array مستند Bale را مستقیماً به `reply_markup` بدهید؛ keyboard builder لازم نیست:
+## چطور فایل، عکس و ویدیو بفرستیم؟
 
-~~~php
+برای ارسال فایل، تفاوت ورودی‌ها مهم هست:
+
+| ورودی | رفتار |
+| --- | --- |
+| شناسهٔ فایل بله در قالب رشته | استفادهٔ دوباره از فایل موجود با `file_id` |
+| نشانی اینترنتی در قالب رشته | ارسال نشانی به بله برای دریافت فایل، مطابق محدودیت‌های همان متد |
+| شیء `SplFileInfo` | آپلود صریح فایل محلی |
+
+مسیر محلی در قالب رشته به‌صورت خودکار آپلود نمی‌شود. برای نمونه:
+
+```php
+use Sajaddp\Bale\Facades\Bale;
+
+// آپلود فایل محلی
+Bale::sendDocument(
+    chatId: 123456789,
+    document: new \SplFileInfo(storage_path('app/report.pdf')),
+    options: ['caption' => 'گزارش آماده‌شده'],
+);
+
+// استفادهٔ دوباره از فایل موجود در بله
+Bale::sendDocument(
+    chatId: 123456789,
+    document: 'bale-file-id',
+);
+
+// ارسال ویدیو از نشانی اینترنتی
+Bale::sendVideo(
+    chatId: 123456789,
+    video: 'https://example.com/video.mp4',
+);
+```
+
+برای عکس از `sendPhoto`، برای فایل صوتی از `sendAudio`، برای پیام صوتی از `sendVoice` و برای پویانمایی از `sendAnimation` استفاده کنید. امضای `sendPhoto` در این پکیج، مطابق جدول فعلی [مستندات بله](https://docs.bale.ai/)، پارامتر الزامی `fromChatId` را نیز دارد؛ نمونهٔ دقیق در [راهنمای فایل و رسانه](https://sajaddehshiri.ir/laravel-bale/files-media/) آمده.
+
+در `sendMediaGroup`، پیوست‌های محلی را با نام مشخص معرفی کنید و در آرایهٔ رسانه به همان نام با قالب `attach://name` ارجاع دهید. پکیج پیش از ارسال، وجود پیوست متناظر را بررسی می‌کند.
+
+## چطور فایل دریافتی از بله را دانلود و ذخیره کنیم؟
+
+`getFile` اطلاعات فایل را می‌گیرد. متد کمکی `downloadFile` همین درخواست را انجام می‌دهد و سپس محتوای فایل را دانلود می‌کند:
+
+```php
+use Illuminate\Support\Facades\Storage;
+use Sajaddp\Bale\Facades\Bale;
+
+$contents = Bale::downloadFile($fileId);
+
+Storage::put('bale/report.pdf', $contents);
+```
+
+خروجی دانلود، رشتهٔ حاوی محتوای دودویی فایل هست. ذخیره‌سازی در این مثال با امکانات خود لاراول انجام می‌شود. پکیج متد عمومی برای دریافت نشانی دانلود حاوی توکن ندارد.
+
+مطابق [مستندات رسمی بله](https://docs.bale.ai/)، سقف فعلی دانلود بازوها ۲۰ مگابایت و اعتبار تضمین‌شدهٔ لینک یک ساعت هست؛ پس از انقضا، دریافت دوبارهٔ اطلاعات فایل امکان گرفتن لینک جدید را فراهم می‌کند. پکیج این محدودیت حجم را به‌صورت محلی اعمال نمی‌کند. اگر اطلاعات فایل، `file_path` غیرخالی نداشته باشد، پیش از دانلود `UnexpectedValueException` رخ می‌دهد.
+
+## چطور دکمهٔ تعاملی بسازیم؟
+
+دکمه‌های درون‌خطی را در `reply_markup` قرار دهید:
+
+```php
+use Sajaddp\Bale\Facades\Bale;
+
 Bale::sendMessage(
     chatId: 123456789,
-    text: 'یک گزینه را انتخاب کنید',
+    text: 'گزارش را دریافت کردید؟',
     options: [
         'reply_markup' => [
             'inline_keyboard' => [
                 [
-                    ['text' => 'تأیید', 'callback_data' => 'confirm'],
-                    ['text' => 'وب‌سایت', 'url' => 'https://example.test'],
+                    ['text' => 'بله، دریافت شد', 'callback_data' => 'report_received'],
                 ],
             ],
         ],
     ],
 );
-~~~
+```
 
-هنگام دریافت `callback_query`، ابتدا query را پاسخ دهید. فیلد `message` در CallbackQuery می‌تواند موجود نباشد؛ فقط در صورت وجود، پیام را ویرایش کنید:
+هنگام دریافت رویداد کلیک، با `answerCallbackQuery` به آن پاسخ دهید. پیام همراه این رویداد اختیاری هست؛ فقط در صورت وجود آن، ویرایش پیام را انجام دهید:
 
-~~~php
+```php
+use Sajaddp\Bale\Facades\Bale;
+
 $callback = $update['callback_query'];
 
 Bale::answerCallbackQuery(callbackQueryId: $callback['id']);
@@ -195,213 +257,182 @@ if (isset($callback['message'])) {
     Bale::editMessageText(
         chatId: $callback['message']['chat']['id'],
         messageId: $callback['message']['message_id'],
-        text: 'ثبت شد',
+        text: 'دریافت گزارش تأیید شد.',
     );
 }
-~~~
+```
 
-این دو عملیات مستقل‌اند؛ پکیج helper ترکیبی callback+edit ندارد.
+پاسخ به کلیک و ویرایش پیام دو درخواست مستقل هستند. [راهنمای دکمه‌ها و پاسخ به کلیک](https://sajaddehshiri.ir/laravel-bale/callbacks-keyboards/)
 
-## ارسال فایل و رسانه: `file_id`، URL و آپلود محلی
+## دریافت پیام‌های ربات: وب‌هوک یا دریافت دوره‌ای
 
-برای `sendPhoto`، `sendAudio`، `sendDocument`، `sendVideo`، `sendAnimation` و `sendVoice`:
+### وب‌هوک در لاراول ۱۳
 
-- `string` بدون تغییر به Bale می‌رود و باید یک Bale `file_id` یا HTTP URL باشد.
-- `SplFileInfo` یعنی آپلود صریح فایل محلی با `multipart/form-data`.
-- رشتهٔ مسیر فایل محلی به‌صورت خودکار upload نمی‌شود.
+با وب‌هوک، بله رویدادها را به نشانی برنامهٔ شما می‌فرستد. مسیر دریافت در برنامهٔ لاراول تعریف می‌شود؛ برای نمونه در `routes/web.php`:
 
-~~~php
-use SplFileInfo;
-
-Bale::sendDocument(
-    chatId: 123456789,
-    document: 'bale-file-id',
-    options: ['caption' => 'استفادهٔ مجدد از فایل'],
-);
-
-Bale::sendVideo(
-    chatId: 123456789,
-    video: 'https://example.test/video.mp4',
-);
-
-Bale::sendDocument(
-    chatId: 123456789,
-    document: new SplFileInfo(storage_path('app/example.pdf')),
-    options: ['caption' => 'آپلود محلی'],
-);
-~~~
-
-مستندات فعلی Bale برای `sendPhoto`، پارامتر `from_chat_id` را نیز الزامی می‌داند:
-
-~~~php
-Bale::sendPhoto(
-    chatId: '@target_channel',
-    fromChatId: '@source_channel',
-    photo: new SplFileInfo(storage_path('app/example.jpg')),
-);
-~~~
-
-برای album از `sendMediaGroup` و array مستند Bale استفاده کنید. attachment محلی باید نام صریح و `attach://name` متناظر داشته باشد.
-
-## چطور فایل بله را دانلود کنیم؟
-
-`getFile($fileId)` یک درخواست رسمی برای metadata است. `downloadFile($fileId)` convenience method پکیج است که نخست `getFile` را اجرا می‌کند، `file_path` غیرخالی را می‌گیرد و محتوای binary را برمی‌گرداند:
-
-~~~php
-$contents = Bale::downloadFile($fileId);
-~~~
-
-در برنامهٔ Laravel خودتان می‌توانید آن را با Storage compose کنید؛ پکیج به Filesystem وابسته نیست:
-
-~~~php
-use Illuminate\Support\Facades\Storage;
-
-Storage::put(
-    'bale/document.pdf',
-    Bale::downloadFile($fileId),
-);
-~~~
-
-طبق مستندات رسمی فعلی Bale، بازوها تا ۲۰ مگابایت فایل دانلود می‌کنند و لینک دانلود حاصل از `getFile` برای یک ساعت تضمین‌شده است؛ با فراخوانی دوبارهٔ `getFile` لینک تازه می‌شود. پکیج این محدودیت را محلی enforce نمی‌کند، URL توکن‌دار را public نمی‌کند و فایل را تبدیل یا بررسی MIME نمی‌کند. اگر `file_path` معتبر نباشد، `UnexpectedValueException` پیش از درخواست دانلود رخ می‌دهد.
-
-## دریافت Update با Polling
-
-`getUpdates` دقیقاً یک درخواست می‌سازد؛ loop، queue و نگه‌داری offset با برنامهٔ شماست:
-
-~~~php
-$updates = Bale::getUpdates([
-    'offset' => $nextOffset,
-    'limit' => 100,
-    'timeout' => 30,
-]);
-
-// پس از پردازش، offset بعدی را در storage برنامهٔ خودتان نگه دارید.
-~~~
-
-برای timeout صحیح integer، پکیج پنج ثانیه headroom انتقال HTTP در نظر می‌گیرد (حداقل ۳۰ ثانیه) بدون تغییر payload Bale.
-
-## راه‌اندازی Webhook در Laravel
-
-یک راه کامل Laravel 13 این است که route را در `routes/web.php` نگه دارید و فقط همان URI را از CSRF خارج کنید. route زیر دقیقاً این URL عمومی را می‌سازد: `https://example.test/bale/webhook`.
-
-~~~php
-// routes/web.php
-
+```php
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/bale/webhook', function (Request $request) {
     $update = $request->all();
 
-    // application logic
+    // اعتبارسنجی و پردازش رویداد را در برنامهٔ خود انجام دهید.
+
+    return response()->noContent();
 });
-~~~
+```
 
-چون `routes/web.php` در middleware گروه `web` قرار دارد، POST خارجی Bale CSRF token ندارد. در `bootstrap/app.php`، callback موجود `withMiddleware` را این‌گونه کامل کنید تا فقط همان مسیر مستثنا شود:
+در `bootstrap/app.php`، داخل تابع موجود `withMiddleware`، فقط همین مسیر را از بررسی جعل درخواست مستثنا کنید:
 
-~~~php
-use Illuminate\Foundation\Configuration\Middleware;
+```php
+$middleware->preventRequestForgery(except: [
+    'bale/webhook',
+]);
+```
 
-->withMiddleware(function (Middleware $middleware): void {
-    $middleware->preventRequestForgery(except: [
-        'bale/webhook',
-    ]);
-})
-~~~
+این تنظیم، مطابق [راهنمای امنیت درخواست در لاراول ۱۳](https://laravel.com/docs/13.x/csrf)، برای پذیرش درخواست خارجی لازم هست؛ به‌تنهایی اصالت فرستنده را اثبات نمی‌کند. اعتبارسنجی ورودی و جلوگیری از پردازش تکراری را متناسب با برنامهٔ خود پیاده‌سازی کنید.
 
-حالا URL ثبت‌شده در Bale دقیقاً با route یکی است:
+پس از در دسترس قرارگرفتن برنامه روی یک دامنهٔ واقعی با اتصال امن، نشانی دقیق همین مسیر را ثبت کنید. دامنهٔ نمونه را با دامنهٔ برنامه جایگزین کنید:
 
-~~~php
-Bale::setWebhook('https://example.test/bale/webhook');
-~~~
+```php
+use Sajaddp\Bale\Facades\Bale;
 
-برای مشاهده یا حذف تنظیمات خروجی از `getWebhookInfo()` و `deleteWebhook()` استفاده کنید. پکیج webhook router، controller، middleware یا secret validation اختراع نمی‌کند.
+Bale::setWebhook('https://example.com/bale/webhook');
+```
 
-## ویرایش، کپی، فوروارد و حذف پیام
+برای مشاهدهٔ تنظیمات از `getWebhookInfo` و برای حذف وب‌هوک از `deleteWebhook` استفاده کنید. [راهنمای کامل وب‌هوک بله](https://sajaddehshiri.ir/laravel-bale/webhooks/)
 
-~~~php
-Bale::forwardMessage(chatId: '@target', fromChatId: 123456789, messageId: 42);
-Bale::copyMessage(chatId: '@target', fromChatId: 123456789, messageId: 42);
-Bale::sendChatAction(chatId: 123456789, action: 'upload_photo');
+### دریافت دوره‌ای با `getUpdates`
 
-Bale::editMessageText(chatId: 123456789, messageId: 42, text: 'متن جدید');
-Bale::editMessageCaption(chatId: 123456789, messageId: 42, options: ['caption' => 'زیرنویس']);
-Bale::editMessageReplyMarkup(chatId: 123456789, messageId: 42, options: ['reply_markup' => $replyMarkup]);
-Bale::deleteMessage(chatId: 123456789, messageId: 42);
-~~~
+`getUpdates` در هر فراخوانی فقط یک درخواست می‌فرستد:
 
-## خطاهای `BaleRequestException` و `RequestException` چه تفاوتی دارند؟
+```php
+use Sajaddp\Bale\Facades\Bale;
 
-- پاسخ معتبر Bale با `ok: false`، `Sajaddp\Bale\Exceptions\BaleRequestException` می‌دهد.
-- HTTP ناموفق خارج از envelope معتبر Bale، از جمله دانلود binary ناموفق، semantics خود Laravel HTTP Client یعنی `Illuminate\Http\Client\RequestException` را حفظ می‌کند.
-- پاسخ موفقِ malformed یا نتیجهٔ با شکل نامعتبر، `UnexpectedValueException` می‌دهد.
+$updates = Bale::getUpdates([
+    'limit' => 100,
+    'timeout' => 30,
+]);
+```
 
-~~~php
-use Sajaddp\Bale\Exceptions\BaleRequestException;
+برای ادامهٔ دریافت، مقدار `offset` را پس از پردازش موفق رویدادها در برنامه نگه دارید و در درخواست بعدی بفرستید. حلقهٔ دریافت، زمان‌بندی و ذخیرهٔ وضعیت را برنامهٔ شما مدیریت می‌کند. پکیج مهلت اتصال را با زمان انتظار بله هماهنگ می‌کند. [راهنمای دریافت دوره‌ای](https://sajaddehshiri.ir/laravel-bale/polling/)
 
-try {
-    Bale::sendMessage(chatId: 123456789, text: 'سلام');
-} catch (BaleRequestException $exception) {
-    report($exception->description);
-}
-~~~
+## درخواست ثبت نظر با `askReview`
 
-## تفاوت Bale و Telegram Bot API
+این متد رسمی بله، درخواست نمایش فرم ثبت یا ویرایش نظر دربارهٔ ربات را ارسال می‌کند:
 
-Bale از نظر نام‌گذاری به Telegram Bot API شباهت دارد، اما این پکیج فقط مستندات Bale را دنبال می‌کند. method، option یا رفتار Telegram-only را فرض نکنید. برای هر کار از API پشتیبانی‌شدهٔ پکیج و مستندات رسمی Bale استفاده کنید.
+```php
+use Sajaddp\Bale\Facades\Bale;
 
-## Laravel Boost و AI Coding
+Bale::askReview(
+    userId: 123456789,
+    delaySeconds: 30,
+);
+```
 
-پکیج یک Boost guideline و Skill با نام `bale-development` دارد. در اپلیکیشن مصرف‌کننده، بعد از نصب Laravel Boost اجرا کنید:
+هر دو ورودی عدد صحیح و الزامی هستند. پاسخ موفق، مقدار منطقی درست هست؛ نمایش فرم همچنان به نسخهٔ برنامهٔ بله و شرایط اعلام‌شده از سوی بله بستگی دارد. [مستند رسمی ثبت نظر](https://docs.bale.ai/)
 
-~~~shell
-php artisan boost:install
-~~~
+<a name="methods"></a>
 
-این Skill به AI coding agent کمک می‌کند API واقعی پکیج، تفاوت wrapper رسمی و convenience method، رسانه، دانلود فایل، callback و مرز webhook/polling را درست استفاده کند.
+## مرجع متدهای پشتیبانی‌شده
 
-## چه چیزهایی عمداً در این پکیج نیست؟
+### متدهای متناظر با رابط رسمی بله
 
-- webhook framework، polling daemon یا Artisan polling command
-- command/handler system، conversation state یا DTOهای Message / Update / Chat
-- keyboard builder و helper ترکیبی callback+edit
-- تشخیص خودکار مسیر فایل محلی
-- public file URL حاوی bot token
-- `Storage` abstraction یا helper اختصاصی برای ذخیرهٔ فایل
+این جدول قابلیت‌های موجود همین پکیج را نشان می‌دهد، نه تمام امکانات سرویس بله. جزئیات ورودی‌ها در [مرجع کامل متدها](docs/api-reference.md) و وضعیت سایر قابلیت‌ها در [جدول پوشش بله](docs/api-coverage.md) آمده.
 
-این مرزها intentional هستند: Laravel Bale یک API client باقی می‌ماند، نه یک framework.
+| کاربرد | متد پکیج | خروجی |
+| --- | --- | --- |
+| دریافت مشخصات ربات | `getMe` | آرایه |
+| ارسال پیام متنی | `sendMessage` | آرایهٔ پیام |
+| بازفرستادن پیام | `forwardMessage` | آرایهٔ پیام |
+| کپی پیام | `copyMessage` | آرایهٔ شناسهٔ پیام |
+| نمایش وضعیت گفتگو | `sendChatAction` | مقدار منطقی |
+| ثبت یا حذف وب‌هوک | `setWebhook`، `deleteWebhook` | مقدار منطقی |
+| دریافت اطلاعات وب‌هوک | `getWebhookInfo` | آرایه |
+| دریافت رویدادها | `getUpdates` | آرایهٔ رویدادها |
+| پاسخ به کلیک دکمه | `answerCallbackQuery` | مقدار منطقی |
+| درخواست ثبت نظر | `askReview` | مقدار منطقی |
+| ویرایش متن، زیرنویس یا دکمه‌ها | `editMessageText`، `editMessageCaption`، `editMessageReplyMarkup` | نتیجهٔ خام بله |
+| حذف پیام | `deleteMessage` | مقدار منطقی |
+| ارسال عکس، صدا، سند، ویدیو، پویانمایی و پیام صوتی | `sendPhoto`، `sendAudio`، `sendDocument`، `sendVideo`، `sendAnimation`، `sendVoice` | آرایهٔ پیام |
+| ارسال گروه رسانه | `sendMediaGroup` | آرایهٔ پیام‌ها |
+| دریافت اطلاعات فایل | `getFile` | آرایهٔ اطلاعات فایل |
+| ارسال موقعیت جغرافیایی | `sendLocation` | آرایهٔ پیام |
+| ارسال اطلاعات مخاطب | `sendContact` | آرایهٔ پیام |
+
+بله برای خروجی سه متد ویرایش پیام نوع مشخصی مستند نکرده؛ پکیج نتیجهٔ خام آن‌ها را برمی‌گرداند. در متدهای دارای `options` نیز ورودی‌های الزامیِ نام‌دار بر کلیدهای همنام در گزینه‌های اضافی مقدم هستند.
+
+### متدهای کمکی خود پکیج
+
+| متد | کاری که انجام می‌دهد | خروجی |
+| --- | --- | --- |
+| `replyToMessage` | استخراج شناسه‌های پیام دریافتی و ارسال پاسخ با `sendMessage` | آرایهٔ پیام |
+| `downloadFile` | دریافت اطلاعات با `getFile` و سپس دانلود فایل | رشتهٔ حاوی محتوای فایل |
+
+این دو متد، نام درخواست رسمی بله نیستند. ابزارهای آزمون نیز بخش جداگانه‌ای از پکیج هستند و در شمار ۲۵ متد رسمی قرار نمی‌گیرند.
+
+## خطاها را چطور تشخیص بدهیم؟
+
+| وضعیت | خطای قابل‌دریافت |
+| --- | --- |
+| بله درخواست را با ساختار خطای معتبر رد کرده | `Sajaddp\Bale\Exceptions\BaleRequestException` |
+| پاسخ ناموفق شبکه خارج از ساختار معتبر خطای بله، از جمله دانلود ناموفق | `Illuminate\Http\Client\RequestException` |
+| پاسخ موفق با ساختار نامعتبر یا اطلاعات ناقص فایل برای دانلود | `UnexpectedValueException` |
+| ناتوانی در برقراری ارتباط یا پایان مهلت درخواست | `Illuminate\Http\Client\ConnectionException` |
+| ورودی نامعتبر برای پاسخ به پیام یا پیوست محلی | `InvalidArgumentException` |
+| توکن تنظیم نشده یا مقدار آن نامعتبر هست | `LogicException` |
+
+جزئیات خطای بله از خود استثنا قابل‌بررسی هست. برای عیب‌یابی، توکن ربات یا نشانی داخلی دانلود حاوی توکن را در گزارش عمومی قرار ندهید. [راهنمای رفع اشکال](https://sajaddehshiri.ir/laravel-bale/troubleshooting/) و [راهنمای رسمی خطاهای شبکه در لاراول](https://laravel.com/docs/13.x/http-client)
+
+## راهنماهای موضوعی
+
+| موضوع | راهنمای آنلاین | متن داخل مخزن |
+| --- | --- | --- |
+| نصب و نخستین درخواست | [شروع کار](https://sajaddehshiri.ir/laravel-bale/getting-started/) | [راهنمای شروع](docs/getting-started.md) |
+| ارسال، پاسخ و ویرایش پیام | [مدیریت پیام‌ها](https://sajaddehshiri.ir/laravel-bale/messages/) | [متن راهنما](docs/messages.md) |
+| دریافت پیام با وب‌هوک | [راه‌اندازی وب‌هوک](https://sajaddehshiri.ir/laravel-bale/webhooks/) | [متن راهنما](docs/webhooks.md) |
+| دریافت دوره‌ای رویدادها | [دریافت با `getUpdates`](https://sajaddehshiri.ir/laravel-bale/polling/) | [متن راهنما](docs/polling.md) |
+| ارسال و دریافت فایل | [فایل و رسانه](https://sajaddehshiri.ir/laravel-bale/files-media/) | [متن راهنما](docs/files-media.md) |
+| دکمه‌ها و تعامل با کاربر | [دکمه‌های درون‌خطی](https://sajaddehshiri.ir/laravel-bale/callbacks-keyboards/) | [متن راهنما](docs/callbacks-keyboards.md) |
+| آزمون بدون ارتباط واقعی | [آزمون پکیج](https://sajaddehshiri.ir/laravel-bale/testing/) | [متن راهنما](docs/testing.md) |
+| نام، ورودی و خروجی متدها | [مرجع کامل](https://sajaddehshiri.ir/laravel-bale/api-reference/) | [مرجع داخل مخزن](docs/api-reference.md) |
+| قابلیت‌های موجود و پشتیبانی‌نشده | [پوشش رابط بله](https://sajaddehshiri.ir/laravel-bale/api-coverage/) | [جدول داخل مخزن](docs/api-coverage.md) |
+| نمونه‌های کوتاه | [نمونه‌های کاربردی](https://sajaddehshiri.ir/laravel-bale/recipes/) | [متن نمونه‌ها](docs/recipes.md) |
+| خطاها و پرسش‌های اجرایی | [رفع اشکال](https://sajaddehshiri.ir/laravel-bale/troubleshooting/) | [متن راهنما](docs/troubleshooting.md) |
+| استفاده با ابزارهای هوش مصنوعی | [راهنمای هوش مصنوعی](https://sajaddehshiri.ir/laravel-bale/ai-coding/) | [متن راهنما](docs/ai-coding.md) |
 
 ## پرسش‌های متداول
 
-### آیا این پکیج برای Laravel 12 کار می‌کند؟
+### آیا این پکیج تمام امکانات بله را پوشش می‌دهد؟
 
-خیر. محدودهٔ پشتیبانی پکیج Laravel 13 است.
+خیر. نسخهٔ فعلی ۲۵ متد رسمی را پوشش می‌دهد. وضعیت ۵۰ متد موجود در مستند مرجع بله، شامل ۲۵ متد پشتیبانی‌نشده، در [جدول پوشش](docs/api-coverage.md) ثبت شده. پیش از انتخاب پکیج برای پرداخت، مدیریت گروه یا قابلیت‌های دیگر، همین جدول را بررسی کنید.
 
-### آیا رشتهٔ مسیر فایل به‌صورت خودکار آپلود می‌شود؟
+### آیا برای لاراول ۱۲ هم قابل‌استفاده هست؟
 
-خیر. `string` فقط `file_id` یا HTTP URL است؛ برای آپلود محلی از `SplFileInfo` استفاده کنید.
+محدودهٔ پشتیبانی فعلی فقط لاراول ۱۳ هست. پشتیبانی از نسخه‌های قدیمی‌تر اعلام نشده.
 
-### آیا پکیج Webhook را خودش می‌سازد؟
+### آیا راهنماهای ربات تلگرام برای این پکیج هم کاربرد دارند؟
 
-خیر. `setWebhook` فقط URL خروجی Bale را پیکربندی می‌کند. route دریافت‌کننده را در اپلیکیشن Laravel خودتان می‌نویسید.
+بخشی از مفاهیم مشابه هستند، اما برای نام متد، ورودی و خروجی باید به [مستندات رسمی بله](https://docs.bale.ai/) و [مرجع همین پکیج](docs/api-reference.md) مراجعه کرد. یکسان‌بودن نام‌ها به‌تنهایی به معنای یکسان‌بودن همهٔ امکانات نیست.
 
-### آیا `getUpdates` خودش Loop اجرا می‌کند؟
+### آیا لاراول بوست برای اجرای ربات لازم هست؟
 
-خیر؛ یک درخواست می‌فرستد. اجرای loop و نگه‌داری offset با برنامهٔ شماست.
+خیر. بوست برای کمک به کدنویسی با هوش مصنوعی در محیط توسعه استفاده می‌شود. اجرای ربات و ارسال درخواست به بله به آن وابسته نیست.
 
-### چطور فایل دریافتی را ذخیره کنم؟
+### آیا در آزمون‌ها باید توکن واقعی داشته باشم؟
 
-در اپلیکیشن Laravel خودتان، `Storage::put('path', Bale::downloadFile($fileId))` را استفاده کنید. پکیج Filesystem dependency ندارد.
+خیر. یک توکن آزمایشی غیرخالی تنظیم کنید و `Bale::fake()` را پیش از اجرای ارتباط با بله فراخوانی کنید. برای بررسی ارسال‌ها از ابزارهای آزمون پکیج استفاده کنید.
 
-### آیا API بله دقیقاً همان Telegram Bot API است؟
+## نگه‌داری، منابع و مشارکت
 
-خیر. شباهت نام‌ها مجوز فرض‌کردن endpoint یا option نیست؛ مستندات Bale مرجع است.
+این پروژه را [سجاد ده‌شیری](https://github.com/sajaddp) نگه‌داری می‌کند و یک پکیج مستقل با [مجوز ام‌آی‌تی](LICENSE) هست؛ محصول رسمی تیم بله یا لاراول نیست. قراردادهای بله از [مستندات رسمی بازو](https://docs.bale.ai/) گرفته می‌شوند و ورودی و خروجی واقعی پکیج در [کد منبع](src/BaleClient.php) قابل‌بررسی هست.
 
-## توسعهٔ پکیج
+برای بررسی کیفیت، [آزمون‌ها](tests/Feature/BaleClientTest.php)، [اجرای آزمون‌های خودکار](https://github.com/sajaddp/laravel-bale/actions/workflows/tests.yml) و [تاریخچهٔ تغییرات](CHANGELOG.md) در دسترس هستند. اجرای محلی آزمون‌ها در نسخهٔ دریافت‌شده از مخزن:
 
-~~~shell
+```shell
 composer install
 composer test
-~~~
+```
 
-تست‌ها با Laravel HTTP fake اجرا می‌شوند و نباید درخواست واقعی Bale یا token واقعی بسازند.
+[راهنمای مشارکت](CONTRIBUTING.md)، [راهنمای پشتیبانی](SUPPORT.md) و [ثبت مشکل یا پیشنهاد](https://github.com/sajaddp/laravel-bale/issues) مسیر ادامهٔ همکاری را توضیح می‌دهند. گزارش آسیب‌پذیری را به‌صورت خصوصی و مطابق [سیاست امنیتی](SECURITY.md) ارسال کنید.
