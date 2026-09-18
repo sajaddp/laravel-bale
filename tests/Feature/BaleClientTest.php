@@ -228,15 +228,15 @@ it('edits Bale messages with documented required values and optional values', fu
     Http::fake([
         'https://tapi.bale.ai/bottest-token/editMessageText' => Http::response([
             'ok' => true,
-            'result' => ['message_id' => 41, 'text' => 'متن جدید'],
+            'result' => true,
         ]),
         'https://tapi.bale.ai/bottest-token/editMessageCaption' => Http::response([
             'ok' => true,
-            'result' => ['message_id' => 41, 'caption' => 'زیرنویس جدید'],
+            'result' => 'caption-updated',
         ]),
         'https://tapi.bale.ai/bottest-token/editMessageReplyMarkup' => Http::response([
             'ok' => true,
-            'result' => ['message_id' => 41],
+            'result' => 41,
         ]),
     ]);
 
@@ -252,7 +252,7 @@ it('edits Bale messages with documented required values and optional values', fu
             'text' => 'نباید ارسال شود',
             'reply_markup' => $replyMarkup,
         ],
-    ))->toBe(['message_id' => 41, 'text' => 'متن جدید'])
+    ))->toBeTrue()
         ->and(Bale::editMessageCaption(
             chatId: '@channel',
             messageId: 41,
@@ -262,7 +262,7 @@ it('edits Bale messages with documented required values and optional values', fu
                 'caption' => 'زیرنویس جدید',
                 'reply_markup' => $replyMarkup,
             ],
-        ))->toBe(['message_id' => 41, 'caption' => 'زیرنویس جدید'])
+        ))->toBe('caption-updated')
         ->and(Bale::editMessageReplyMarkup(
             chatId: '@channel',
             messageId: 41,
@@ -271,7 +271,7 @@ it('edits Bale messages with documented required values and optional values', fu
                 'message_id' => 999,
                 'reply_markup' => $replyMarkup,
             ],
-        ))->toBe(['message_id' => 41]);
+        ))->toBe(41);
 
     Http::assertSent(function (Request $request) use ($replyMarkup): bool {
         return $request->url() === 'https://tapi.bale.ai/bottest-token/editMessageText'
@@ -366,7 +366,69 @@ it('rejects malformed successful result shapes', function (): void {
     ]);
 
     expect(fn (): bool => Bale::deleteWebhook())
-        ->toThrow(UnexpectedValueException::class, 'array or boolean result');
+        ->toThrow(UnexpectedValueException::class, 'boolean result');
+});
+
+it('rejects successful Bale responses without a result', function (): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getMe' => Http::response(['ok' => true]),
+    ]);
+
+    expect(fn (): array => Bale::getMe())
+        ->toThrow(UnexpectedValueException::class, 'without a result');
+});
+
+it('rejects non-boolean Bale ok values', function (bool|int|string $ok): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getMe' => Http::response([
+            'ok' => $ok,
+            'result' => [],
+        ]),
+    ]);
+
+    expect(fn (): array => Bale::getMe())
+        ->toThrow(UnexpectedValueException::class, 'invalid API response');
+})->with([
+    'integer ok' => 1,
+    'string ok' => 'true',
+]);
+
+it('rejects malformed Bale error envelopes', function (array $payload): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getMe' => Http::response($payload),
+    ]);
+
+    expect(fn (): array => Bale::getMe())
+        ->toThrow(UnexpectedValueException::class, 'invalid API error response');
+})->with([
+    'missing error code' => [['ok' => false]],
+    'string error code' => [['ok' => false, 'error_code' => '429']],
+    'non-string description' => [['ok' => false, 'error_code' => 429, 'description' => []]],
+    'non-array parameters' => [['ok' => false, 'error_code' => 429, 'parameters' => 'retry']],
+]);
+
+it('keeps an omitted Bale error description valid', function (): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getMe' => Http::response([
+            'ok' => false,
+            'error_code' => 400,
+        ]),
+    ]);
+
+    expect(fn (): array => Bale::getMe())
+        ->toThrow(BaleRequestException::class, 'Bale API request failed.');
+});
+
+it('preserves Laravel HTTP failures for malformed HTTP-error responses', function (): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getMe' => Http::response([
+            'ok' => 1,
+            'result' => [],
+        ], 500),
+    ]);
+
+    expect(fn (): array => Bale::getMe())
+        ->toThrow(RequestException::class);
 });
 
 it('fails clearly without a token before making a request', function (): void {

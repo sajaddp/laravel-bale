@@ -83,11 +83,10 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
      */
-    public function editMessageText(int|string $chatId, int $messageId, string $text, array $options = []): array
+    public function editMessageText(int|string $chatId, int $messageId, string $text, array $options = []): mixed
     {
-        return $this->requestArray('editMessageText', array_merge($options, [
+        return $this->request('editMessageText', array_merge($options, [
             'chat_id' => $chatId,
             'message_id' => $messageId,
             'text' => $text,
@@ -96,11 +95,10 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
      */
-    public function editMessageCaption(int|string $chatId, int $messageId, array $options = []): array
+    public function editMessageCaption(int|string $chatId, int $messageId, array $options = []): mixed
     {
-        return $this->requestArray('editMessageCaption', array_merge($options, [
+        return $this->request('editMessageCaption', array_merge($options, [
             'chat_id' => $chatId,
             'message_id' => $messageId,
         ]));
@@ -108,11 +106,10 @@ class BaleClient
 
     /**
      * @param  array<string, mixed>  $options
-     * @return array<mixed>
      */
-    public function editMessageReplyMarkup(int|string $chatId, int $messageId, array $options = []): array
+    public function editMessageReplyMarkup(int|string $chatId, int $messageId, array $options = []): mixed
     {
-        return $this->requestArray('editMessageReplyMarkup', array_merge($options, [
+        return $this->request('editMessageReplyMarkup', array_merge($options, [
             'chat_id' => $chatId,
             'message_id' => $messageId,
         ]));
@@ -137,29 +134,29 @@ class BaleClient
 
         $payload = $response->json();
 
-        if (! is_array($payload) || ! array_key_exists('ok', $payload)) {
+        if (! is_array($payload) || ! array_key_exists('ok', $payload) || ! is_bool($payload['ok'])) {
             $response->throw();
 
             throw new UnexpectedValueException('Bale returned an invalid API response.');
         }
 
         if ($payload['ok'] === false) {
+            if (! $this->isValidErrorEnvelope($payload)) {
+                $response->throw();
+
+                throw new UnexpectedValueException('Bale returned an invalid API error response.');
+            }
+
             throw BaleRequestException::fromResponse($payload);
         }
 
         $response->throw();
 
-        if ($payload['ok'] !== true) {
-            throw BaleRequestException::fromResponse($payload);
+        if (! array_key_exists('result', $payload)) {
+            throw new UnexpectedValueException('Bale returned a successful response without a result.');
         }
 
-        $result = $payload['result'] ?? null;
-
-        if (! is_array($result) && ! is_bool($result)) {
-            throw new UnexpectedValueException('Bale returned a successful response without an array or boolean result.');
-        }
-
-        return $result;
+        return $payload['result'];
     }
 
     /**
@@ -187,6 +184,14 @@ class BaleClient
         }
 
         return $result;
+    }
+
+    /** @param array<mixed> $payload */
+    private function isValidErrorEnvelope(array $payload): bool
+    {
+        return is_int($payload['error_code'] ?? null)
+            && (! array_key_exists('description', $payload) || is_string($payload['description']))
+            && (! array_key_exists('parameters', $payload) || is_array($payload['parameters']));
     }
 
     private function urlFor(string $method): string

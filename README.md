@@ -114,7 +114,7 @@ Bale::editMessageReplyMarkup(
 Bale::deleteMessage(chatId: 123456789, messageId: 42);
 ~~~
 
-Use only Bale-documented optional values in options. Bale result objects are returned as arrays; setWebhook, deleteWebhook, sendChatAction, answerCallbackQuery, and deleteMessage return booleans.
+Use only Bale-documented optional values in options. Documented Bale result objects are returned as arrays; setWebhook, deleteWebhook, sendChatAction, answerCallbackQuery, and deleteMessage return booleans. Bale does not document the result type of message-editing methods, so they return Bale's raw result.
 
 ## Errors
 

@@ -62,7 +62,7 @@ Bale::editMessageReplyMarkup(
 Bale::deleteMessage(chatId: 123456789, messageId: 42);
 ~~~
 
-setWebhook, deleteWebhook, sendChatAction, answerCallbackQuery, and deleteMessage return booleans. Bale result objects are returned as arrays.
+setWebhook, deleteWebhook, sendChatAction, answerCallbackQuery, and deleteMessage return booleans. Documented Bale result objects are arrays. Bale does not document a result type for message-editing methods, so they return Bale's raw result.
 
 Handle Bale API failures explicitly and test application code with Laravel's HTTP fake rather than real requests.
 
