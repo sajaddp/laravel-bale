@@ -210,6 +210,45 @@ it('sends a media group as JSON when it has no local attachments', function (): 
     });
 });
 
+it('rejects malformed JSON sendMediaGroup result lists', function (string|array $result): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/sendMediaGroup' => Http::response([
+            'ok' => true,
+            'result' => $result,
+        ]),
+    ]);
+
+    expect(fn (): array => Bale::sendMediaGroup(10, [['type' => 'photo', 'media' => 'photo-file-id']]))
+        ->toThrow(UnexpectedValueException::class);
+})->with([
+    'response object instead of a list' => [['message_id' => 304]],
+    'list with a scalar item' => [['not a message']],
+]);
+
+it('validates multipart sendMediaGroup result lists', function (): void {
+    $path = tempnam(sys_get_temp_dir(), 'bale-media-group-');
+    file_put_contents($path, 'media group attachment');
+
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/sendMediaGroup' => Http::response([
+            'ok' => true,
+            'result' => ['not a message'],
+        ]),
+    ]);
+
+    try {
+        expect(fn (): array => Bale::sendMediaGroup(
+            chatId: 10,
+            media: [['type' => 'photo', 'media' => 'attach://photo']],
+            attachments: ['photo' => new SplFileInfo($path)],
+        ))->toThrow(UnexpectedValueException::class);
+
+        Http::assertSent(fn (Request $request): bool => $request->isMultipart());
+    } finally {
+        unlink($path);
+    }
+});
+
 it('rejects a missing main media attachment before sending a request', function (): void {
     expect(fn (): array => Bale::sendMediaGroup(
         chatId: 10,

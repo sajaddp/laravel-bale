@@ -35,6 +35,21 @@ it('gets updates with one JSON request and forwards documented options', functio
     });
 });
 
+it('rejects malformed getUpdates result lists', function (string|array $result): void {
+    Http::fake([
+        'https://tapi.bale.ai/bottest-token/getUpdates' => Http::response([
+            'ok' => true,
+            'result' => $result,
+        ]),
+    ]);
+
+    expect(fn (): array => Bale::getUpdates())
+        ->toThrow(UnexpectedValueException::class);
+})->with([
+    'response object instead of a list' => [['update_id' => 42]],
+    'list with a scalar item' => [['not an update']],
+]);
+
 it('gives Bale long-polling timeouts transport headroom without changing the payload', function (int $baleTimeout, int $expectedTransportTimeout): void {
     $transportTimeout = null;
 

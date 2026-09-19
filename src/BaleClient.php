@@ -182,7 +182,7 @@ class BaleClient
             ? $this->transportTimeoutForLongPoll($options['timeout'])
             : null;
 
-        return $this->requestArray('getUpdates', $options, $transportTimeout);
+        return $this->responseObjectList($this->requestArray('getUpdates', $options, $transportTimeout));
     }
 
     /**
@@ -257,10 +257,10 @@ class BaleClient
         ]);
 
         if ($attachments === []) {
-            return $this->requestArray('sendMediaGroup', $data);
+            return $this->responseObjectList($this->requestArray('sendMediaGroup', $data));
         }
 
-        return $this->requestMultipartArray('sendMediaGroup', $data, $attachments, ['media']);
+        return $this->responseObjectList($this->requestMultipartArray('sendMediaGroup', $data, $attachments, ['media']));
     }
 
     /**
@@ -617,6 +617,25 @@ class BaleClient
 
         if (! is_array($result)) {
             throw new UnexpectedValueException('Bale returned a successful response without an array result.');
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param  array<mixed>  $result
+     * @return list<array<string, mixed>>
+     */
+    private function responseObjectList(array $result): array
+    {
+        if (! array_is_list($result)) {
+            throw new UnexpectedValueException('Bale returned a successful response without a list result.');
+        }
+
+        foreach ($result as $item) {
+            if (! is_array($item)) {
+                throw new UnexpectedValueException('Bale returned a successful response list with a non-object item.');
+            }
         }
 
         return $result;
