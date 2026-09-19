@@ -33,11 +33,12 @@ it('supports advanced Bale assertions with Laravel HTTP client requests', functi
 
     Bale::sendDocument(
         chatId: 123456789,
-        document: new SplFileInfo(__FILE__),
+        document: new SplFileInfo(dirname(__DIR__).'/Fixtures/upload.txt'),
         options: ['caption' => 'فایل'],
     );
 
-    Bale::assertSent('sendDocument', fn (Request $request): bool => $request->isMultipart());
+    Bale::assertSent('sendDocument', fn (Request $request): bool => $request->isMultipart()
+        && str_contains($request->body(), 'filename="upload.txt"'));
 });
 
 it('records the official request made by a convenience method under the Bale fake', function (): void {
