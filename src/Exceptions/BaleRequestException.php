@@ -8,7 +8,7 @@ use RuntimeException;
 
 class BaleRequestException extends RuntimeException
 {
-    /** @param array<mixed> $parameters */
+    /** @param array<string, mixed> $parameters */
     public function __construct(
         public readonly ?int $baleErrorCode,
         public readonly string $description,
@@ -17,7 +17,7 @@ class BaleRequestException extends RuntimeException
         parent::__construct($description, $baleErrorCode ?? 0);
     }
 
-    /** @param array<mixed> $response */
+    /** @param array<string, mixed> $response */
     public static function fromResponse(array $response): self
     {
         $errorCode = $response['error_code'] ?? null;
